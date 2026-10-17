@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "utilisateur.apps.UtilisateurConfig",
     "formation.apps.FormationConfig",
+    "session_formation.apps.SessionFormationConfig",
 ]
 
 MIDDLEWARE = [
