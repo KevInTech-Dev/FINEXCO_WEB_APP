@@ -19,6 +19,7 @@ class SessionFormation(models.Model):
     date_debut = models.DateField()
     date_fin = models.DateField()
 
+    date_cloture_paiement = models.DateTimeField()
     place_total = models.PositiveIntegerField(
         validators=[MinValueValidator(1)],
     )

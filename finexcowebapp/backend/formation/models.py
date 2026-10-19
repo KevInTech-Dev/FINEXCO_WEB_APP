@@ -3,6 +3,7 @@ from django.core.validators import MinValueValidator
 from django.db.models import Q
 
 class Categorie(models.Model):
+    #id: models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
 

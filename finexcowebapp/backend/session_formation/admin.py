@@ -8,6 +8,7 @@ class SessionFormationAdmin(admin.ModelAdmin):
         "formateur",
         "date_debut",
         "date_fin",
+        "date_cloture_paiement",
         "lieu",
         "place_total",
         "prix",
