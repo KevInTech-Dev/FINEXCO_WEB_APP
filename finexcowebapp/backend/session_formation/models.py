@@ -2,8 +2,10 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.conf import settings
 from django.db.models import F
+import uuid
 
 class SessionFormation(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     formation = models.ForeignKey(
         "formation.Formation",
         on_delete=models.PROTECT,
@@ -36,7 +38,9 @@ class SessionFormation(models.Model):
         choices=EtatSession.choices,
         default=EtatSession.OUVERTE,
     )
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     class Meta:
         ordering = ["date_debut"]
         verbose_name = "session de formation"

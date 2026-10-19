@@ -1,12 +1,14 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.db.models import Q
+import uuid
 
 class Categorie(models.Model):
-    #id: models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     class Meta:
         ordering = ["nom"]
         verbose_name = "catégorie"
@@ -16,6 +18,7 @@ class Categorie(models.Model):
         return self.nom
 
 class Formation(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     class EtatPublication(models.TextChoices):
         BROUILLON = "BROUILLON", "Brouillon"
         PUBLIE = "PUBLIE", "Publié"
@@ -40,7 +43,9 @@ class Formation(models.Model):
         on_delete=models.PROTECT,
         related_name="formation",
     )
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     class Meta:
         ordering = ["nom"]
         verbose_name = "formation"
