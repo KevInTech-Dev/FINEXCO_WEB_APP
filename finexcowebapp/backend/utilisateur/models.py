@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-
+import uuid
 
 class UtilisateurManager(BaseUserManager):
     use_inimigrations = True
@@ -32,6 +32,7 @@ class UtilisateurManager(BaseUserManager):
 
 
 class Utilisateur(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     class Role(models.TextChoices):
         APPRENANT = "APPRENANT", "Apprenant"
         ADMIN = "ADMIN", "Administrateur"
@@ -50,6 +51,8 @@ class Utilisateur(AbstractUser):
         choices=Role.choices,
         default=Role.APPRENANT,
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["nom", "prenoms"]
