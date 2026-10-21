@@ -13,13 +13,21 @@ class CreationCompteSerializer(serializers.ModelSerializer):
         fields = ("id", "nom", "prenoms", "email", "telephone", "password")
         read_only_fields = ("id",)
 
-    def validate_password(self, value):
-        try:
-            validate_password(value)
-        except DjangoValidationError as erreur:
-            raise serializers.ValidationError(erreur.messages)
+        # On vérifie le mot de passe en tenant compte des informations du futur compte.
+    def validate(self, attrs):
+        candidat = Utilisateur(
+            nom=attrs["nom"],
+            prenoms=attrs["prenoms"],
+            email=attrs["email"],
+            telephone=attrs["telephone"],
+        )
 
-        return value
+        try:
+            validate_password(attrs["password"], user=candidat)
+        except DjangoValidationError as erreur:
+            raise serializers.ValidationError({"password": erreur.messages})
+
+        return attrs
 
     def create(self, validated_data):
         password = validated_data.pop("password")

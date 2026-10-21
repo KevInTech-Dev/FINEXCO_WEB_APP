@@ -1,8 +1,7 @@
 from django.urls import path
-
-from .views import CreationCompteView
+from .views import CreationInscriptionView
 
 
 urlpatterns = [
-    path("auth/inscription/", CreationCompteView.as_view(), name="creation-compte"),
+    path("", CreationInscriptionView.as_view(), name="creation-inscription"),
 ]

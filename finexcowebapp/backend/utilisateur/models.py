@@ -3,7 +3,7 @@ from django.db import models
 import uuid
 
 class UtilisateurManager(BaseUserManager):
-    use_inimigrations = True
+    use_in_imigrations = True
 
     def create_user(self, email, password=None, **extra_fields):
         if not password:

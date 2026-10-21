@@ -2,7 +2,6 @@ from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import F, Q
 from django.utils import timezone
 
 from .models import Inscription

@@ -1,32 +1,41 @@
-from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
-from .models import Utilisateur
+from .models import Inscription
+from .services import creer_inscription
 
 
-class CreationCompteSerializer(serializers.ModelSerializer):
-    # Le mot de passe est accepté à la création, mais jamais renvoyé dans la réponse API.
-    password = serializers.CharField(write_only=True, min_length=8)
+class CreationInscriptionSerializer(serializers.ModelSerializer):
+    # L'apprenant fournit l'identifiant de la session.
+    session_id = serializers.UUIDField(write_only=True)
+
+    # La réponse renvoie l'identifiant de la session, sans permettre de le modifier.
+    session = serializers.UUIDField(source="session_id", read_only=True)
 
     class Meta:
-        model = Utilisateur
-        fields = ("id", "nom", "prenoms", "email", "telephone", "password")
-        read_only_fields = ("id",)
+        model = Inscription
+        fields = (
+            "id",
+            "session_id",
+            "session",
+            "date_inscription",
+            "date_limite_paiement",
+            "statut",
+        )
+        read_only_fields = (
+            "id",
+            "session",
+            "date_inscription",
+            "date_limite_paiement",
+            "statut",
+        )
 
-    # Les règles de mot de passe configurées dans Django.
-    def validate_password(self, value):
-        try:
-            validate_password(value)
-        except DjangoValidationError as erreur:
-            raise serializers.ValidationError(erreur.messages)
-
-        return value
-
+    # On laisse le service métier créer l'inscription et vérifier les règles.
     def create(self, validated_data):
-        password = validated_data.pop("password")
-        utilisateur = Utilisateur(**validated_data)
-        utilisateur.role = Utilisateur.Role.APPRENANT
-        utilisateur.set_password(password)
-        utilisateur.save()
-        return utilisateur
+        try:
+            return creer_inscription(
+                apprenant=self.context["request"].user,
+                session_id=validated_data["session_id"],
+            )
+        except DjangoValidationError as erreur:
+            raise serializers.ValidationError({"detail": erreur.messages})

@@ -1,11 +1,11 @@
 from rest_framework import generics, permissions
 
-from .models import Utilisateur
-from .serializers import CreationCompteSerializer
+from .serializers import CreationInscriptionSerializer
 
 
-class CreationCompteView(generics.CreateAPIView):
-    queryset = Utilisateur.objects.all()
-    serializer_class = CreationCompteSerializer
+class CreationInscriptionView(generics.CreateAPIView):
+    # La création et ses règles métier passent par le sérialiseur et son service.
+    serializer_class = CreationInscriptionSerializer
 
-    permission_classes = [permissions.AllowAny]
+    # Une inscription à une session exige un compte connecté.
+    permission_classes = [permissions.IsAuthenticated]
