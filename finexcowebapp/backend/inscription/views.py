@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from rest_framework import generics, permissions
 
-# Create your views here.
+from .models import Utilisateur
+from .serializers import CreationCompteSerializer
+
+
+class CreationCompteView(generics.CreateAPIView):
+    queryset = Utilisateur.objects.all()
+    serializer_class = CreationCompteSerializer
+
+    permission_classes = [permissions.AllowAny]

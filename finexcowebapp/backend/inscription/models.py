@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 import uuid
-from datetime import timedelta
 from django.utils import timezone
 
 class Inscription(models.Model):
@@ -36,16 +35,6 @@ class Inscription(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def save(self, *args, **kwargs):
-        if self._state.adding:
-            limit_72h = self.date_inscription + timedelta(hours=72)
-            self.date_limit_paiement = min(
-                limit_72h,
-                self.session.date_cloture_paiement,
-            )
-            
-        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ["-date_inscription"]

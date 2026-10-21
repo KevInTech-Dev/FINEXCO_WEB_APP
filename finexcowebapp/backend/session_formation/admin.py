@@ -26,3 +26,4 @@ class SessionFormationAdmin(admin.ModelAdmin):
     )
 
     date_hierarchy = "date_debut"
+    readonly_fields = ("id", "created_at", "updated_at")
