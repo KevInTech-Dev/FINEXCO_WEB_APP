@@ -33,7 +33,7 @@ class Paiement(models.Model):
 
     montant = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=0,
         validators=[MinValueValidator(0.01)],
     )
     mode = models.CharField(max_length=10, choices=Mode.choices)

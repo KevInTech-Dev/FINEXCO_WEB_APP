@@ -32,7 +32,7 @@ class SessionFormation(models.Model):
         validators=[MinValueValidator(1)],
     )
     lieu = models.CharField(max_length=255)
-    prix = models.DecimalField(max_digits=10, decimal_places=2)
+    prix = models.DecimalField(max_digits=10, decimal_places=0)
 
     class EtatSession(models.TextChoices):
         OUVERTE = "OUVERTE", "Ouverte"
@@ -96,7 +96,7 @@ class SessionFormation(models.Model):
         super().clean()
 
         erreurs = {}
-        
+
         if self.date_debut and self.date_fin and self.date_fin < self.date_debut:
             raise ValidationError({
                 "date_fin": "La date de fin doit être après la date de début."
