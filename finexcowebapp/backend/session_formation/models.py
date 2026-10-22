@@ -22,6 +22,7 @@ class SessionFormation(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="sessions_animées",
+        limit_choices_to={"role":"FORMATEUR"},
     )
 
     date_debut = models.DateField()
@@ -80,7 +81,6 @@ class SessionFormation(models.Model):
             timezone.get_current_timezone(),
         )
 
-    # Calcul de la durée en comptant le premier et le dernier jour.
     @property
     def duree_jours(self):
         if not self.date_debut or not self.date_fin:
@@ -88,7 +88,6 @@ class SessionFormation(models.Model):
 
         return (self.date_fin - self.date_debut).days + 1
 
-    # On affiche la formation et la date de début dans l'administration.
     def __str__(self):
         return f"{self.formation.nom} - {self.date_debut}"
 
@@ -96,7 +95,12 @@ class SessionFormation(models.Model):
     def clean(self):
         super().clean()
 
+        erreurs = {}
+        
         if self.date_debut and self.date_fin and self.date_fin < self.date_debut:
             raise ValidationError({
                 "date_fin": "La date de fin doit être après la date de début."
             })
+        
+        if self.formateur_id and self.formateur.role != "FORMATEUR":
+            erreurs["formateur"] = "L'utilisateur sélectionné doit avoir le rôle Formateur"

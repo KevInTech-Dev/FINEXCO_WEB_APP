@@ -53,15 +53,16 @@ class UtilisateurAdmin(UserAdmin):
                 "fields": (
                     "email",
                     "nom",
+                    "prenoms",
                     "telephone",
                     "role",
                     "password1",
                     "password2",
                     "is_staff",
                     "is_superuser"
-                )
-            }
-        )
+                ),
+            },
+        ),
     )
 
     readonly_fields = ("id", "created_at", "updated_at")
