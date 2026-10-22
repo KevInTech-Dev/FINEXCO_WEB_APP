@@ -1,11 +1,17 @@
-from django.db import models
-from django.core.validators import MinValueValidator
-from django.conf import settings
-from django.db.models import F
+from datetime import datetime, time, timedelta
 import uuid
+
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
+from django.db import models
+from django.db.models import F
+from django.utils import timezone
+
 
 class SessionFormation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     formation = models.ForeignKey(
         "formation.Formation",
         on_delete=models.PROTECT,
@@ -21,7 +27,6 @@ class SessionFormation(models.Model):
     date_debut = models.DateField()
     date_fin = models.DateField()
 
-    date_cloture_paiement = models.DateTimeField()
     place_total = models.PositiveIntegerField(
         validators=[MinValueValidator(1)],
     )
@@ -38,9 +43,10 @@ class SessionFormation(models.Model):
         choices=EtatSession.choices,
         default=EtatSession.OUVERTE,
     )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         ordering = ["date_debut"]
         verbose_name = "session de formation"
@@ -60,6 +66,37 @@ class SessionFormation(models.Model):
             ),
         ]
 
+    # clôture à la dernière seconde du jour précédant la session.
+    @property
+    def date_cloture_paiement(self):
+        if not self.date_debut:
+            return None
+
+        veille = self.date_debut - timedelta(days=1)
+        fin_de_jour = datetime.combine(veille, time.max)
+
+        return timezone.make_aware(
+            fin_de_jour,
+            timezone.get_current_timezone(),
+        )
+
+    # Calcul de la durée en comptant le premier et le dernier jour.
+    @property
+    def duree_jours(self):
+        if not self.date_debut or not self.date_fin:
+            return None
+
+        return (self.date_fin - self.date_debut).days + 1
+
+    # On affiche la formation et la date de début dans l'administration.
     def __str__(self):
         return f"{self.formation.nom} - {self.date_debut}"
-    
+
+    # Vérifier que la session ne se termine pas avant son début.
+    def clean(self):
+        super().clean()
+
+        if self.date_debut and self.date_fin and self.date_fin < self.date_debut:
+            raise ValidationError({
+                "date_fin": "La date de fin doit être après la date de début."
+            })

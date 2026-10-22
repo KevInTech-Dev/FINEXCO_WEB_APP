@@ -4,10 +4,14 @@ from .views import FormationPubliqueDetailView, FormationPubliqueListView
 
 
 urlpatterns = [
-    path("formations/", FormationPubliqueListView.as_view(), name="liste-formations"),
+    path(
+        "formations/",
+        FormationPubliqueListView.as_view(),
+        name="formations-publiques",
+    ),
     path(
         "formations/<uuid:pk>/",
         FormationPubliqueDetailView.as_view(),
-        name="detail-formation",
+        name="formation-publique-detail",
     ),
 ]

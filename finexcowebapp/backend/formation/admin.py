@@ -12,7 +12,7 @@ class CategorieAdmin(admin.ModelAdmin):
 
 @admin.register(Formation)
 class FormationAdmin(admin.ModelAdmin):
-    list_display = ("nom", "categorie", "duree", "etat_publication")
+    list_display = ("nom", "categorie", "etat_publication")
     list_filter = ("etat_publication", "categorie")
     search_fields = ("nom", "description", "categorie__nom")
     readonly_fields = ("id", "created_at", "updated_at")

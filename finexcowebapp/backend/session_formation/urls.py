@@ -1,12 +1,12 @@
 from django.urls import path
 
-from .views import SessionsPubliquesFormationView
+from .views import SessionPubliqueListView
 
 
 urlpatterns = [
     path(
         "formations/<uuid:formation_id>/sessions/",
-        SessionsPubliquesFormationView.as_view(),
-        name="sessions-publiques-formation",
+        SessionPubliqueListView.as_view(),
+        name="sessions-publiques",
     ),
 ]

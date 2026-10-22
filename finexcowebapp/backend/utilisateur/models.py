@@ -58,3 +58,7 @@ class Utilisateur(AbstractUser):
     REQUIRED_FIELDS = ["nom", "prenoms"]
 
     objects = UtilisateurManager()
+
+    # On affiche le nom complet lorsqu'un autre modèle référence cet utilisateur.
+    def __str__(self):
+        return f"{self.prenoms} {self.nom}"

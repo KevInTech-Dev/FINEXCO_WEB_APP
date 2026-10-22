@@ -1,6 +1,4 @@
 from django.db import models
-from django.core.validators import MinValueValidator
-from django.db.models import Q
 import uuid
 
 class Categorie(models.Model):
@@ -27,10 +25,6 @@ class Formation(models.Model):
     nom = models.CharField(max_length=150)
     description = models.TextField(blank=True)
 
-    #la durée est en mois pour le moment
-    duree = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)],
-    )
 
     etat_publication = models.CharField(
         max_length=10,
@@ -50,12 +44,6 @@ class Formation(models.Model):
         ordering = ["nom"]
         verbose_name = "formation"
         verbose_name_plural = "formations"
-        constraints = [
-            models.CheckConstraint(
-                condition=Q(duree__gte=1),
-                name="formation_duree_min_1",
-            ),
-        ]
 
     def __str__(self):
-            return self.nom
+        return self.nom

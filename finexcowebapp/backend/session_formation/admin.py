@@ -8,6 +8,7 @@ class SessionFormationAdmin(admin.ModelAdmin):
         "formateur",
         "date_debut",
         "date_fin",
+        "duree_jours",
         "date_cloture_paiement",
         "lieu",
         "place_total",
@@ -26,4 +27,4 @@ class SessionFormationAdmin(admin.ModelAdmin):
     )
 
     date_hierarchy = "date_debut"
-    readonly_fields = ("id", "created_at", "updated_at")
+    readonly_fields = ("id", "created_at", "updated_at", "date_cloture_paiement", "duree_jours")
