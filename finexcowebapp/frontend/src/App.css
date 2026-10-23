@@ -1419,3 +1419,7 @@ a {
   font-size: 1em !important;
   line-height: 1;
 }
+.card-media .image-placeholder,
+.detail-image.image-placeholder {
+  display: grid;
+}
