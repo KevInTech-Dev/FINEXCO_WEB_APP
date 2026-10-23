@@ -3,7 +3,7 @@ from django.db import models
 import uuid
 
 class UtilisateurManager(BaseUserManager):
-    use_inimigrations = True
+    use_in_migrations = True
 
     def create_user(self, email, password=None, **extra_fields):
         if not password:
@@ -58,3 +58,7 @@ class Utilisateur(AbstractUser):
     REQUIRED_FIELDS = ["nom", "prenoms"]
 
     objects = UtilisateurManager()
+
+    # On affiche le nom complet lorsqu'un autre modèle référence cet utilisateur.
+    def __str__(self):
+        return f"{self.prenoms} {self.nom}"

@@ -1,0 +1,8 @@
+$kind: http-request
+name: "Détail d'une Formation"
+order: 2000
+method: GET
+url: '{{base_url}}/api/formations/{{formation_id}}/'
+pathVariables:
+  - key: formation_id
+    value: '{{formation_id}}'

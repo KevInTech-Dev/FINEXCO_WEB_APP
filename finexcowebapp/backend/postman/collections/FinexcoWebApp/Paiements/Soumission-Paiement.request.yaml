@@ -1,0 +1,25 @@
+$kind: http-request
+name: "Soumettre un Paiement"
+order: 1000
+method: POST
+url: '{{base_url}}/api/paiements/'
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{access_token}}'
+body:
+  type: formdata
+  content:
+    - key: inscription_id
+      type: text
+      value: '{{inscription_id}}'
+      description: UUID de l'inscription concernée
+    - key: mode
+      type: text
+      value: FLOOZ
+      description: 'Mode de paiement : FLOOZ ou TMONEY'
+    - key: preuve_paiement
+      type: file
+      src: ''
+      description: Fichier justificatif du paiement

@@ -10,7 +10,7 @@ class UtilisateurAdmin(UserAdmin):
     form = UtilisateurChangeForm
     model = Utilisateur
 
-    list_display = ("email", "nom", "prenoms", "role", "is_staff", "is_active", "is_active")
+    list_display = ("email", "nom", "prenoms", "role", "is_staff", "is_active")
     list_filter = ("role", "is_staff", "is_active")
     search_fields = ("email", "nom", "prenoms")
     ordering = ("email",)
@@ -33,6 +33,16 @@ class UtilisateurAdmin(UserAdmin):
                 )
             },
         ),
+        (
+            "Suivi", 
+            {
+                "fields": (
+                    "id", 
+                    "created_at", 
+                    "updated_at"
+                )
+            }
+        ),
     )
 
     add_fieldsets = (
@@ -43,13 +53,16 @@ class UtilisateurAdmin(UserAdmin):
                 "fields": (
                     "email",
                     "nom",
+                    "prenoms",
                     "telephone",
                     "role",
                     "password1",
                     "password2",
                     "is_staff",
                     "is_superuser"
-                )
-            }
-        )
+                ),
+            },
+        ),
     )
+
+    readonly_fields = ("id", "created_at", "updated_at")

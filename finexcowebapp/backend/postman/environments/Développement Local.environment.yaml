@@ -1,0 +1,12 @@
+name: Développement Local
+values:
+  - key: base_url
+    value: 'http://localhost:8000'
+  - key: access_token
+    value: ''
+  - key: refresh_token
+    value: ''
+  - key: formation_id
+    value: ''
+  - key: session_id
+    value: ''

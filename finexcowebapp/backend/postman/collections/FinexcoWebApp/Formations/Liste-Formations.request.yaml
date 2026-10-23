@@ -1,0 +1,5 @@
+$kind: http-request
+name: Liste des Formations
+order: 1000
+method: GET
+url: '{{base_url}}/api/formations/'
