@@ -1,0 +1,340 @@
+[
+{
+  "model": "sessions.session",
+  "pk": "ql3dqcltdaew0nv8tedvy9onmokn2c79",
+  "fields": {
+    "session_data": ".eJxVzLsOwjAMheF3yUyj1Ikbh5GdZ6jsxqEF1Eq9TIh3h0odYD7_d16m5W3t223RuR2yORsgEnXqK8LaV6EhqRiSq0gCZgGuidCcfplw99Bxt_nO422y3TSu8yB2T-yxLvY6ZX1ejvbvoOel_-oICVKDqkXAaaRYCnhE5ZRidpqoBkpcSxZ2GBOi81BihwTRcxeCeX8Ag9c_5w:1xIlpv:VsOesdfYuQ6MS9QB6xZh50-ZnLEWe7oteOwXEP1DdXU",
+    "expire_date": "2026-11-02T11:47:27.743Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "y4otiwg9mshbizuyzjl9pt7wsbza0ray",
+  "fields": {
+    "session_data": ".eJxVzLsOwjAMheF3yUyj1Ikbh5GdZ6jsxqEF1Eq9TIh3h0odYD7_d16m5W3t223RuR2yORsgEnXqK8LaV6EhqRiSq0gCZgGuidCcfplw99Bxt_nO422y3TSu8yB2T-yxLvY6ZX1ejvbvoOel_-oICVKDqkXAaaRYCnhE5ZRidpqoBkpcSxZ2GBOi81BihwTRcxeCeX8Ag9c_5w:1xJqJH:5VSj8Gh999ELsP8qVdIsem04FSFKkfsuhB_Mj8rDfNI",
+    "expire_date": "2026-11-05T10:46:11.452Z"
+  }
+},
+{
+  "model": "utilisateur.utilisateur",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$8ZOoEc5t7y6ttvL29Ujv1V$xiJM+LrsmcvuLNa7eR+ZK1Bj6xdSvjVVWx7bsPjea/8=",
+    "last_login": "2026-10-22T10:46:11.440Z",
+    "is_superuser": true,
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-10-19T11:43:05.016Z",
+    "nom": "ADJAKLI",
+    "prenoms": "Kevin",
+    "email": "devkevintech@gmail.com",
+    "telephone": "",
+    "role": "ADMIN",
+    "created_at": "2026-10-19T11:43:05.614Z",
+    "updated_at": "2026-10-19T11:43:05.614Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "utilisateur.utilisateur",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$5Ta8HDRZh90wUKopmXpf2e$K4DAiF17CgU6purxm2KhAtLPU2GFlfzeLhx91YlmvSM=",
+    "last_login": "2026-10-22T10:30:36.089Z",
+    "is_superuser": false,
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-10-22T10:27:10.889Z",
+    "nom": "Joe Dwet",
+    "prenoms": "File",
+    "email": "komlankevina@gmail.com",
+    "telephone": "96796072",
+    "role": "FORMATEUR",
+    "created_at": "2026-10-22T10:27:11.540Z",
+    "updated_at": "2026-10-22T10:47:13.948Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "utilisateur.utilisateur",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$E5qHlAyJVtAoMSqRfFSEOh$wcNrGcYJfNDSk6IUu8uRuXGiWU12MBm2X+tGBK51xf4=",
+    "last_login": null,
+    "is_superuser": false,
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-10-22T09:07:11.397Z",
+    "nom": "Rodrigue",
+    "prenoms": "Jean",
+    "email": "rodri@gmail.com",
+    "telephone": "+2280700000",
+    "role": "APPRENANT",
+    "created_at": "2026-10-22T09:07:12.094Z",
+    "updated_at": "2026-10-22T09:07:12.094Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "utilisateur.utilisateur",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$Yz4RS6EEz4wq2XbecPYOPr$dC8idAnttih2MycK9YWw0waomdpmqAd2tLp3BQxUiyE=",
+    "last_login": null,
+    "is_superuser": false,
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-10-21T11:52:23.256Z",
+    "nom": "ADJAKLI",
+    "prenoms": "Kevin",
+    "email": "kevin@gmail.com",
+    "telephone": "90123456",
+    "role": "APPRENANT",
+    "created_at": "2026-10-21T11:52:23.961Z",
+    "updated_at": "2026-10-21T11:52:23.961Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "formation.categorie",
+  "pk": "6161e1e8-d8a1-4fc5-8221-3798abcdbfd6",
+  "fields": {
+    "nom": "Informatique",
+    "description": "Domaine de l'informatique",
+    "created_at": "2026-10-19T11:47:54.120Z",
+    "updated_at": "2026-10-19T11:47:54.120Z"
+  }
+},
+{
+  "model": "formation.formation",
+  "pk": "b8af8d3f-616f-482d-8f89-b86a9bd56629",
+  "fields": {
+    "nom": "Comptabilité",
+    "description": "La première formation de comptabilité",
+    "etat_publication": "PUBLIE",
+    "categorie": "6161e1e8-d8a1-4fc5-8221-3798abcdbfd6",
+    "created_at": "2026-10-21T12:20:12.626Z",
+    "updated_at": "2026-10-21T17:42:40.466Z"
+  }
+},
+{
+  "model": "formation.formation",
+  "pk": "d73487ae-7c7b-454d-b5cb-ee51956c1c5a",
+  "fields": {
+    "nom": "Formation pratique en informatique",
+    "description": "Voici la première formation de la catégorie informatique",
+    "etat_publication": "PUBLIE",
+    "categorie": "6161e1e8-d8a1-4fc5-8221-3798abcdbfd6",
+    "created_at": "2026-10-21T12:16:42.908Z",
+    "updated_at": "2026-10-21T12:16:42.908Z"
+  }
+},
+{
+  "model": "session_formation.sessionformation",
+  "pk": "1b49c2bb-aa64-45de-9f03-b4f0eccd10d7",
+  "fields": {
+    "formation": "b8af8d3f-616f-482d-8f89-b86a9bd56629",
+    "formateur": [
+      "komlankevina@gmail.com"
+    ],
+    "date_debut": "2025-02-01",
+    "date_fin": "2025-03-05",
+    "place_total": 20,
+    "lieu": "Lomé",
+    "prix": "150000",
+    "etat": "OUVERTE",
+    "created_at": "2026-10-22T12:54:53.059Z",
+    "updated_at": "2026-10-22T12:54:53.059Z"
+  }
+},
+{
+  "model": "session_formation.sessionformation",
+  "pk": "40b844d1-740c-4f64-901a-10d912b0048f",
+  "fields": {
+    "formation": "b8af8d3f-616f-482d-8f89-b86a9bd56629",
+    "formateur": [
+      "komlankevina@gmail.com"
+    ],
+    "date_debut": "2025-02-01",
+    "date_fin": "2025-03-05",
+    "place_total": 20,
+    "lieu": "Lomé",
+    "prix": "150000",
+    "etat": "OUVERTE",
+    "created_at": "2026-10-22T12:55:06.187Z",
+    "updated_at": "2026-10-22T12:55:06.188Z"
+  }
+},
+{
+  "model": "session_formation.sessionformation",
+  "pk": "a5e68179-7050-4227-983a-82c484a691f6",
+  "fields": {
+    "formation": "b8af8d3f-616f-482d-8f89-b86a9bd56629",
+    "formateur": [
+      "komlankevina@gmail.com"
+    ],
+    "date_debut": "2026-11-02",
+    "date_fin": "2026-11-08",
+    "place_total": 12,
+    "lieu": "Agence FINEXCO",
+    "prix": "150000",
+    "etat": "OUVERTE",
+    "created_at": "2026-10-22T12:16:46.689Z",
+    "updated_at": "2026-10-22T12:16:46.689Z"
+  }
+},
+{
+  "model": "session_formation.sessionformation",
+  "pk": "acbada69-ffa0-4617-b6dc-88f08d6974e1",
+  "fields": {
+    "formation": "d73487ae-7c7b-454d-b5cb-ee51956c1c5a",
+    "formateur": [
+      "devkevintech@gmail.com"
+    ],
+    "date_debut": "2026-10-25",
+    "date_fin": "2026-11-25",
+    "place_total": 50,
+    "lieu": "Lomé",
+    "prix": "100000",
+    "etat": "OUVERTE",
+    "created_at": "2026-10-21T16:32:32.679Z",
+    "updated_at": "2026-10-21T17:00:09.972Z"
+  }
+},
+{
+  "model": "inscription.inscription",
+  "pk": "1cf5bef6-2c14-4f6d-b378-841180faa114",
+  "fields": {
+    "apprenant": [
+      "rodri@gmail.com"
+    ],
+    "session": "a5e68179-7050-4227-983a-82c484a691f6",
+    "date_inscription": "2026-10-22T13:31:18.732Z",
+    "date_limite_paiement": "2026-10-25T13:31:18.732Z",
+    "statut": "EN_ATTENTE_PAIEMENT",
+    "created_at": "2026-10-22T13:31:18.742Z",
+    "updated_at": "2026-10-23T09:44:41.354Z"
+  }
+},
+{
+  "model": "inscription.inscription",
+  "pk": "56405190-8605-4fba-b88b-6f7f632394b9",
+  "fields": {
+    "apprenant": [
+      "kevin@gmail.com"
+    ],
+    "session": "a5e68179-7050-4227-983a-82c484a691f6",
+    "date_inscription": "2026-10-22T13:37:20.469Z",
+    "date_limite_paiement": "2026-10-25T13:37:20.469Z",
+    "statut": "CONFIRMEE",
+    "created_at": "2026-10-22T13:37:20.471Z",
+    "updated_at": "2026-10-22T15:06:07.294Z"
+  }
+},
+{
+  "model": "paiement.paiement",
+  "pk": "1233ba60-f6e0-4565-8480-018a3f9687f8",
+  "fields": {
+    "inscription": "56405190-8605-4fba-b88b-6f7f632394b9",
+    "traite_par": [
+      "devkevintech@gmail.com"
+    ],
+    "montant": "150000",
+    "mode": "FLOOZ",
+    "preuve_paiement": "preuves_paiement/Fond_décran.jpg",
+    "statut": "VALIDE",
+    "motif_refus": "",
+    "date_traitement": "2026-10-22T15:06:07.293Z",
+    "created_at": "2026-10-22T14:28:03.623Z",
+    "updated_at": "2026-10-22T15:06:07.293Z"
+  }
+},
+{
+  "model": "paiement.paiement",
+  "pk": "222cd6ca-1663-41c9-a938-8c609e3adaf8",
+  "fields": {
+    "inscription": "1cf5bef6-2c14-4f6d-b378-841180faa114",
+    "traite_par": [
+      "devkevintech@gmail.com"
+    ],
+    "montant": "150000",
+    "mode": "FLOOZ",
+    "preuve_paiement": "preuves_paiement/Capture_décran_2026-07-09_120418_DSLKVmA.png",
+    "statut": "REFUSE",
+    "motif_refus": "Montant insuffisant.",
+    "date_traitement": "2026-10-23T09:41:43.693Z",
+    "created_at": "2026-10-23T09:36:08.152Z",
+    "updated_at": "2026-10-23T09:41:43.693Z"
+  }
+},
+{
+  "model": "paiement.paiement",
+  "pk": "984be1fa-0f99-468a-8500-9d4f9190c0eb",
+  "fields": {
+    "inscription": "1cf5bef6-2c14-4f6d-b378-841180faa114",
+    "traite_par": [
+      "devkevintech@gmail.com"
+    ],
+    "montant": "150000",
+    "mode": "FLOOZ",
+    "preuve_paiement": "preuves_paiement/Capture_décran_2026-07-09_120418_1gZArUm.png",
+    "statut": "REFUSE",
+    "motif_refus": "Montant insuffisant.",
+    "date_traitement": "2026-10-23T09:33:13.251Z",
+    "created_at": "2026-10-22T18:03:29.420Z",
+    "updated_at": "2026-10-23T09:33:13.251Z"
+  }
+},
+{
+  "model": "paiement.paiement",
+  "pk": "d41aa5a4-d03a-4b8e-8ce5-38fd7b683783",
+  "fields": {
+    "inscription": "1cf5bef6-2c14-4f6d-b378-841180faa114",
+    "traite_par": null,
+    "montant": "150000",
+    "mode": "FLOOZ",
+    "preuve_paiement": "preuves_paiement/Capture_décran_2026-07-09_120418_NW9OEKm.png",
+    "statut": "A_VERIFIER",
+    "motif_refus": "",
+    "date_traitement": null,
+    "created_at": "2026-10-23T09:44:41.353Z",
+    "updated_at": "2026-10-23T09:44:41.353Z"
+  }
+},
+{
+  "model": "paiement.paiement",
+  "pk": "f5135748-d649-4c29-8d8b-e58fdeafbcaa",
+  "fields": {
+    "inscription": "1cf5bef6-2c14-4f6d-b378-841180faa114",
+    "traite_par": [
+      "devkevintech@gmail.com"
+    ],
+    "montant": "150000",
+    "mode": "FLOOZ",
+    "preuve_paiement": "preuves_paiement/Capture_décran_2026-08-01_210655.png",
+    "statut": "REFUSE",
+    "motif_refus": "Preuve de paiement illisible ou invalide.",
+    "date_traitement": "2026-10-22T15:36:29.640Z",
+    "created_at": "2026-10-22T15:30:50.583Z",
+    "updated_at": "2026-10-22T15:36:29.641Z"
+  }
+},
+{
+  "model": "paiement.paiement",
+  "pk": "f5f7dede-7f0a-4319-a9e0-425d9bb69104",
+  "fields": {
+    "inscription": "1cf5bef6-2c14-4f6d-b378-841180faa114",
+    "traite_par": [
+      "devkevintech@gmail.com"
+    ],
+    "montant": "150000",
+    "mode": "FLOOZ",
+    "preuve_paiement": "preuves_paiement/Capture_décran_2026-07-09_120418.png",
+    "statut": "REFUSE",
+    "motif_refus": "Montant insuffisant.",
+    "date_traitement": "2026-10-22T17:52:47.818Z",
+    "created_at": "2026-10-22T17:50:09.953Z",
+    "updated_at": "2026-10-22T17:52:47.818Z"
+  }
+}
+]

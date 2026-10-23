@@ -47,7 +47,7 @@ class RefusPaiementView(APIView):
             paiement = refuser_paiement(
                 paiement_id=paiement_id,
                 administrateur=request.user,
-                motif=motif_serializer.validated_data["data"],
+                motif=motif_serializer.validated_data["motif"],
             )
         except DjangoValidationError as erreur:
             raise serializers.ValidationError({"detail": erreur.messages})

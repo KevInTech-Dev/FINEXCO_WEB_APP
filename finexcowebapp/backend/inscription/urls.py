@@ -3,5 +3,5 @@ from .views import CreationInscriptionView
 
 
 urlpatterns = [
-    path("", CreationInscriptionView.as_view(), name="creation-inscription"),
+    path("", CreationInscriptionView.as_view(), name="inscriptions"),
 ]

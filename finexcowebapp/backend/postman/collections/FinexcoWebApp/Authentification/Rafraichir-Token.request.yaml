@@ -1,0 +1,25 @@
+$kind: http-request
+name: Rafraîchir Token
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_0eie}}"
+order: 3000
+method: POST
+url: "{{base_url}}/api/auth/rafraichir/"
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "refresh": "{{refresh_token}}"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const json = pm.response.json();
+      if (json.access) {
+          pm.environment.set("access_token", json.access);
+      }
+    language: text/javascript

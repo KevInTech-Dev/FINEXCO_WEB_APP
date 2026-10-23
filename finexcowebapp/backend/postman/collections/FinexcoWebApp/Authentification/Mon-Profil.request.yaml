@@ -1,0 +1,10 @@
+$kind: http-request
+name: Mon Profil
+order: 4000
+method: GET
+url: '{{base_url}}/api/auth/me/'
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{access_token}}'

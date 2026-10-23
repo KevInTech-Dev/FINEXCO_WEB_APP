@@ -3,7 +3,6 @@
 import django.core.validators
 import django.db.models.deletion
 import django.utils.timezone
-import uuid
 from django.conf import settings
 from django.db import migrations, models
 
@@ -96,13 +95,6 @@ class Migration(migrations.Migration):
             model_name="paiement",
             name="updated_at",
             field=models.DateTimeField(auto_now=True),
-        ),
-        migrations.AlterField(
-            model_name="paiement",
-            name="id",
-            field=models.UUIDField(
-                default=uuid.uuid4, editable=False, primary_key=True, serialize=False
-            ),
         ),
         migrations.AlterField(
             model_name="paiement",

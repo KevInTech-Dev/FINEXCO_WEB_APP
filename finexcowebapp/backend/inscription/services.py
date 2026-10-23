@@ -59,6 +59,10 @@ def creer_inscription(*, apprenant, session_id):
                 paiements__statut=Paiement.Statut.A_VERIFIER,
                 paiements__created_at__lte=F("date_limite_paiement"),
             )
+            | Q(
+                statut=Inscription.Statut.PAIEMENT_REFUSE,
+                date_limite_paiement__gt=maintenant
+            )
         )
         .distinct()
         .count()
@@ -90,7 +94,10 @@ def expirer_inscriptions():
     # On expire les inscriptions en attente dont le délai est passé,
     # sauf celles qui ont une preuve déposée à temps et toujours en vérification.
     return Inscription.objects.filter(
-        statut=Inscription.Statut.EN_ATTENTE_PAIEMENT,
+        statut__in=(
+            Inscription.Statut.EN_ATTENTE_PAIEMENT,
+            Inscription.Statut.PAIEMENT_REFUSE,
+        ),
         date_limite_paiement__lte=maintenant,
     ).exclude(
         id__in=Subquery(preuves_deposees_a_temps)

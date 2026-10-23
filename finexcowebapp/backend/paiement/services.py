@@ -21,8 +21,12 @@ def soumettre_paiement(*, apprenant, inscription_id, mode, preuve_paiement):
     if apprenant.role != apprenant.Role.APPRENANT:
         raise ValidationError("Seul un apprenant peut soumettre un paiement.")
     
-    if inscription.statut != Inscription.Statut.EN_ATTENTE_PAIEMENT:
+    if inscription.statut not in (
+        Inscription.Statut.EN_ATTENTE_PAIEMENT,
+        Inscription.Statut.PAIEMENT_REFUSE,
+    ):
         raise ValidationError("Cette inscription n'attend pas de paiement.")
+        
 
     if timezone.now() > inscription.date_limite_paiement:
         raise ValidationError("Le délai de paiement de cette inscription est dépassé.")
@@ -41,8 +45,7 @@ def soumettre_paiement(*, apprenant, inscription_id, mode, preuve_paiement):
     if montant_a_payer <= 0:
         raise ValidationError("Le prix de cette session ne permet pas de créer un paiement.")
     
-    # On enregistre le paiement comme preuve à vérifier par l'administrateur.
-    return Paiement.objects.create(
+    paiement = Paiement.objects.create(
         inscription=inscription,
         montant=montant_a_payer,
         mode=mode,
@@ -50,6 +53,10 @@ def soumettre_paiement(*, apprenant, inscription_id, mode, preuve_paiement):
         statut=Paiement.Statut.A_VERIFIER,
     )
 
+    inscription.statut = Inscription.Statut.EN_ATTENTE_PAIEMENT
+    inscription.save(update_fields=["statut", "updated_at"])
+
+    return paiement
 
 @transaction.atomic
 def valider_paiement(*, paiement_id, administrateur):
@@ -125,5 +132,7 @@ def refuser_paiement(*, paiement_id, administrateur, motif):
             "updated_at",
         ]
     )
-
+    inscription = paiement.inscription
+    inscription.statut = Inscription.Statut.PAIEMENT_REFUSE
+    inscription.save(update_fields=["statut", "updated_at"])
     return paiement

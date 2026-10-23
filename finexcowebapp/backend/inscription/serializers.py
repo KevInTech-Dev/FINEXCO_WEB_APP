@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
-
+from session_formation.serializers import SessionPubliqueSerializer
 from .models import Inscription
 from .services import creer_inscription
 
@@ -9,8 +9,7 @@ class CreationInscriptionSerializer(serializers.ModelSerializer):
     # L'apprenant fournit l'identifiant de la session.
     session_id = serializers.UUIDField(write_only=True)
 
-    # La réponse renvoie l'identifiant de la session, sans permettre de le modifier.
-    session = serializers.UUIDField(source="session_id", read_only=True)
+    session = SessionPubliqueSerializer(read_only=True)
 
     class Meta:
         model = Inscription
@@ -22,6 +21,7 @@ class CreationInscriptionSerializer(serializers.ModelSerializer):
             "date_limite_paiement",
             "statut",
         )
+
         read_only_fields = (
             "id",
             "session",
@@ -29,7 +29,7 @@ class CreationInscriptionSerializer(serializers.ModelSerializer):
             "date_limite_paiement",
             "statut",
         )
-
+        
     # On laisse le service métier créer l'inscription et vérifier les règles.
     def create(self, validated_data):
         try:

@@ -56,13 +56,13 @@ class SessionCreationSerializer(serializers.ModelSerializer):
 
         read_only_fields = ("id", "duree_jours")
 
-    # def validate(self, donnees):
-    #     date_debut = donnees.get("date_debut")
-    #     date_fin = donnees.get("date_fin")
+    def validate(self, donnees):
+        date_debut = donnees.get("date_debut")
+        date_fin = donnees.get("date_fin")
 
-    #     if date_debut and date_fin and date_fin < date_debut:
-    #         raise serializers.ValidationError({
-    #             "date_fin": "La date de fin doit être égale ou postérieure à la date de début."
-    #         })
+        if date_debut and date_fin and date_fin < date_debut:
+            raise serializers.ValidationError({
+                "date_fin": "La date de fin doit être égale ou postérieure à la date de début."
+            })
 
-    #     return donnees
+        return donnees

@@ -1,0 +1,23 @@
+$kind: http-request
+name: Créer une Session
+order: 2000
+method: POST
+url: "{{base_url}}/api/sessions/"
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_1day}}"
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "formation": "{{formation_id}}",
+      "formateur": "{{formateur_id}}",
+      "date_debut": "2025-02-01",
+      "date_fin": "2025-03-05",
+      "lieu": "Lomé",
+      "prix": "150000.00",
+      "place_total": 20
+    }

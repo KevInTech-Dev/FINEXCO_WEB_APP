@@ -98,9 +98,15 @@ class SessionFormation(models.Model):
         erreurs = {}
 
         if self.date_debut and self.date_fin and self.date_fin < self.date_debut:
-            raise ValidationError({
-                "date_fin": "La date de fin doit être après la date de début."
-            })
+            erreurs["date_fin"] = (
+                "La date de fin doit être égale ou postérieure "
+                "à la date de début."
+            )
         
         if self.formateur_id and self.formateur.role != "FORMATEUR":
-            erreurs["formateur"] = "L'utilisateur sélectionné doit avoir le rôle Formateur"
+            erreurs["formateur"] = (
+                "L'utilisateur sélectionné doit avoir le rôle Formateur."
+            )
+
+        if erreurs:
+            raise ValidationError(erreurs)

@@ -8,6 +8,7 @@ class Inscription(models.Model):
     class Statut(models.TextChoices):
         EN_ATTENTE_PAIEMENT = "EN_ATTENTE_PAIEMENT", "En attente de paiement"
         CONFIRMEE = "CONFIRMEE", "Confirmée"
+        PAIEMENT_REFUSE = "PAIEMENT_REFUSE", "Paiement Refusé"
         ANNULEE = "ANNULEE", "Annulée"
         EXPIREE = "EXPIREE", "Expirée"
 
