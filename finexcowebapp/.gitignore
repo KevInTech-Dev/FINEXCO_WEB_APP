@@ -9,3 +9,5 @@ __pycache__/
 htmlcov/
 staticfiles/
 media/
+.postman/
+postman/backend/data_before_postgres.json
