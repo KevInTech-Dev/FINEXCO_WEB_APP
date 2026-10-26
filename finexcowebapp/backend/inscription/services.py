@@ -105,3 +105,38 @@ def expirer_inscriptions():
         statut=Inscription.Statut.EXPIREE,
         updated_at=maintenant,
     )
+
+@transaction.atomic
+def annuler_inscription(*, inscription_id, apprenant):
+    inscription = (
+        Inscription.objects.select_for_update()
+        .select_relate("session__formation__categorie", "session_formateur")
+        .filter(id=inscription_id, apprenant=apprenant)
+        .first()
+    )
+
+    if inscription is None:
+        raise ValidationError("Inscription introuvable")
+
+    if apprenant.role != Utilisateur.Role.APPRENANT:
+        raise ValidationError("Seul un apprenant peut annuler une inscription.")
+
+    status_autorisant_annulation = (
+        Inscription.Statut.EN_ATTENTE_PAIEMENT,
+        Inscription.Statut.PAIEMENT_REFUSE,
+    )
+
+    if inscription.statut not in status_autorisant_annulation:
+        raise ValidationError("Cette inscription ne peut pas être annulée")
+
+    paiement_en_cours_ou_valide = inscription.paiements.filter(
+        statut__in=(Paiement.Statut.A_VERIFIER, Paiement.Statut.VALIDE)
+    ).exists()
+
+    if paiement_en_cours_ou_valide:
+        raise ValidationError("Cette inscription ne peut pas être annulée car un paiement est en cours de traitement")
+
+    inscription.statut = Inscription.Statut.ANNULEE
+    inscription.save(update_fields=["statut", "updated_at"])
+
+    return inscription
