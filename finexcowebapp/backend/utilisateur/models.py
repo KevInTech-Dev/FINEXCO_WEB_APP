@@ -1,9 +1,9 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-
+import uuid
 
 class UtilisateurManager(BaseUserManager):
-    use_inimigrations = True
+    use_in_migrations = True
 
     def create_user(self, email, password=None, **extra_fields):
         if not password:
@@ -32,6 +32,7 @@ class UtilisateurManager(BaseUserManager):
 
 
 class Utilisateur(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     class Role(models.TextChoices):
         APPRENANT = "APPRENANT", "Apprenant"
         ADMIN = "ADMIN", "Administrateur"
@@ -50,8 +51,14 @@ class Utilisateur(AbstractUser):
         choices=Role.choices,
         default=Role.APPRENANT,
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["nom", "prenoms"]
 
     objects = UtilisateurManager()
+
+    # On affiche le nom complet lorsqu'un autre modèle référence cet utilisateur.
+    def __str__(self):
+        return f"{self.prenoms} {self.nom}"

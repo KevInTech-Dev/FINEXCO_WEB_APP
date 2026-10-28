@@ -1,0 +1,25 @@
+$kind: http-request
+name: Connexion (Obtenir Token)
+order: 2000
+method: POST
+url: "{{base_url}}/api/auth/connexion/"
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "kevin@gmail.com",
+      "password": "UnMotDePasseSolide123!"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const json = pm.response.json();
+      if (json.access) {
+          pm.environment.set("access_token", json.access);
+      }
+      if (json.refresh) {
+          pm.environment.set("refresh_token", json.refresh);
+      }
+    language: text/javascript

@@ -1,0 +1,9 @@
+$kind: collection
+description: API collection for the FinexcoWebApp Django backend — covers authentication, formations, sessions, inscriptions, and paiements.
+variables:
+  - key: json_web_token_1day
+    secret: true
+    disabled: false
+  - key: json_web_token_0eie
+    secret: true
+    disabled: false

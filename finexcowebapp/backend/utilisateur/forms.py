@@ -37,14 +37,15 @@ class UtilisateurCreationForm(forms.ModelForm):
             password_validation.validate_password(password2, self.instance)
 
         return password2
-def save(self, commit=True):
-    utilisateur =super().save(commit=False)
-    utilisateur.set_password(self.cleaned_data["password1"])
-
-    if commit:
-        utilisateur.save()
-
-    return utilisateur
+    
+    def save(self, commit=True):
+        utilisateur =super().save(commit=False)
+        utilisateur.set_password(self.cleaned_data["password1"])
+    
+        if commit:
+            utilisateur.save()
+    
+        return utilisateur
 
 class UtilisateurChangeForm(DjangoUserChangeForm):
     class Meta(DjangoUserChangeForm.Meta):

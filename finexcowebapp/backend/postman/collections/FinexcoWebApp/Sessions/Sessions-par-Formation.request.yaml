@@ -1,0 +1,8 @@
+$kind: http-request
+name: "Sessions d'une Formation"
+order: 1000
+method: GET
+url: '{{base_url}}/api/formations/{{formation_id}}/sessions/'
+pathVariables:
+  - key: formation_id
+    value: '{{formation_id}}'

@@ -1,0 +1,17 @@
+$kind: http-request
+name: Inscription Compte
+order: 1000
+method: POST
+url: "{{base_url}}/api/auth/inscription/"
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "nom": "Rodrigue",
+      "prenoms": "Jean",
+      "email": "rodri@gmail.com",
+      "telephone": "+2280700000",
+      "password": "MotDePasse123!"
+    }
