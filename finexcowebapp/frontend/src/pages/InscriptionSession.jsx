@@ -3,21 +3,14 @@ import { Link, Navigate, useLocation, useParams } from "react-router-dom";
 import { analyserErreur } from "../api/auth";
 import { formatPrix } from "../api/formations";
 import { creerInscriptionApi } from "../api/inscriptions";
+import {
+  enregistrerInscription,
+  trouverParSession,
+} from "../api/inscriptionsLocales";
 import { useAuth } from "../context/AuthContext";
 import { useFormations } from "../context/FormationsContext";
 import useTitre from "../hooks/useTitre";
-
-function formaterDateHeure(valeur) {
-  const date = new Date(valeur);
-  if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+import { formaterDateHeure } from "../utils/dates";
 
 /* Page /formations/:id/sessions/:sessionId/inscription
    Inscription d'une personne connectée à une session : elle vérifie le
@@ -66,6 +59,8 @@ export default function InscriptionSession() {
     (item) => String(item.id) === sessionId
   );
 
+  const dejaLocale = session ? trouverParSession(utilisateur.id, String(session.id)) : null;
+
   if (!formation || !session) {
     return (
       <section className="detail-page">
@@ -94,6 +89,19 @@ export default function InscriptionSession() {
     );
   }
 
+  // Affiche l'écran de réussite et garde l'inscription pour la page de paiement.
+  function garder(reponse) {
+    enregistrerInscription(utilisateur.id, {
+      id: reponse.id,
+      formationId: String(id),
+      sessionId: String(session.id),
+      dateLimite: reponse.date_limite_paiement,
+      preuveEnvoyee: false,
+      demo: Boolean(reponse.demo),
+    });
+    setInscription(reponse);
+  }
+
   async function confirmer(event) {
     event.preventDefault();
     if (!accepte) {
@@ -107,8 +115,8 @@ export default function InscriptionSession() {
       // Données de démonstration : pas de vrai serveur, on simule la réponse.
       if (source !== "api") {
         const limite = new Date(Date.now() + 72 * 3600 * 1000).toISOString();
-        setInscription({
-          id: "demo",
+        garder({
+          id: `demo-${Date.now()}`,
           statut: "EN_ATTENTE_PAIEMENT",
           date_limite_paiement: limite,
           demo: true,
@@ -119,7 +127,7 @@ export default function InscriptionSession() {
       const reponse = await appelAuthentifie((jeton) =>
         creerInscriptionApi(jeton, session.id)
       );
-      setInscription(reponse);
+      garder(reponse);
     } catch (e) {
       const { champs, general } = analyserErreur(e);
       setErreur(general || Object.values(champs).join(" "));
@@ -165,9 +173,9 @@ export default function InscriptionSession() {
           )}
 
           <div className="inscription-actions">
-            <button className="primary-button" type="button" disabled>
-              Payer maintenant (bientôt disponible)
-            </button>
+            <Link className="primary-button" to={`/paiement/${inscription.id}`}>
+              Payer maintenant
+            </Link>
             <Link className="header-button" to="/formations">
               Voir d'autres formations
             </Link>
@@ -265,6 +273,14 @@ export default function InscriptionSession() {
           {erreur && (
             <div className="form-alerte" role="alert">
               {erreur}
+              {dejaLocale && (
+                <>
+                  {" "}
+                  <Link to={`/paiement/${dejaLocale.id}`}>
+                    Continuer vers le paiement
+                  </Link>
+                </>
+              )}
             </div>
           )}
 

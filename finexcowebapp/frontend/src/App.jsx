@@ -14,6 +14,7 @@ import Formations from "./pages/Formations";
 import Inscription from "./pages/Inscription";
 import InscriptionSession from "./pages/InscriptionSession";
 import PageIntrouvable from "./pages/PageIntrouvable";
+import Paiement from "./pages/Paiement";
 
 /* Le site est découpé en pages. Chaque adresse (URL) affiche une page :
 
@@ -21,6 +22,7 @@ import PageIntrouvable from "./pages/PageIntrouvable";
      /formations        -> Catalogue complet
      /formations/:id    -> Fiche d'une formation
      /formations/:id/sessions/:sessionId/inscription -> S'inscrire à une session
+     /paiement/:inscriptionId -> Payer une inscription
      /connexion         -> Se connecter
      /inscription       -> Créer un compte
 */
@@ -42,6 +44,7 @@ function App() {
                   path="/formations/:id/sessions/:sessionId/inscription"
                   element={<InscriptionSession />}
                 />
+                <Route path="/paiement/:inscriptionId" element={<Paiement />} />
                 <Route path="/connexion" element={<Connexion />} />
                 <Route path="/inscription" element={<Inscription />} />
                 <Route path="*" element={<PageIntrouvable />} />
