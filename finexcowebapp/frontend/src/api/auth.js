@@ -52,10 +52,18 @@ export async function appeler(chemin, { methode = "GET", corps, jeton } = {}) {
       method: methode,
       headers: {
         Accept: "application/json",
-        ...(corps ? { "Content-Type": "application/json" } : {}),
+        // FormData doit laisser le navigateur définir son boundary multipart.
+        ...(corps && !(typeof FormData !== "undefined" && corps instanceof FormData)
+          ? { "Content-Type": "application/json" }
+          : {}),
         ...(jeton ? { Authorization: `Bearer ${jeton}` } : {}),
       },
-      body: corps ? JSON.stringify(corps) : undefined,
+      // Le JSON est sérialisé; FormData est envoyé tel quel pour les fichiers.
+      body: corps
+        ? typeof FormData !== "undefined" && corps instanceof FormData
+          ? corps
+          : JSON.stringify(corps)
+        : undefined,
     });
   } catch {
     throw new ErreurApi(0, null);

@@ -28,71 +28,6 @@ const MEDIAS = {
 };
 
 /* =====================================================================
-   DONNÉES DE SECOURS
-   Affichées seulement si le serveur ne répond pas (ou n'a encore aucune
-   formation publiée). Elles ont exactement la forme de la réponse du
-   backend, donc elles passent par le même code que les vraies données.
-   ===================================================================== */
-const DONNEES_SECOURS = [
-  {
-    id: "secours-1",
-    nom: "Atelier SYCEBNL",
-    description: "Formation pratique pour comprendre le SYCEBNL.",
-    categorie: { id: "cat-1", nom: "Comptabilité" },
-    sessions: [
-      {
-        id: "secours-1-a",
-        date_debut: "2026-11-10",
-        date_fin: "2026-11-15",
-        duree_jours: 6,
-        lieu: "Salle B2, Siège Lomé",
-        prix: "75000",
-        place_total: null,
-        formateur: null,
-      },
-    ],
-  },
-  {
-    id: "secours-2",
-    nom: "Marketing Digital & Social Media",
-    description:
-      "Développez votre marque et maîtrisez les publicités en ligne.",
-    categorie: { id: "cat-2", nom: "Marketing" },
-    sessions: [
-      {
-        id: "secours-2-a",
-        date_debut: "2026-11-07",
-        date_fin: "2026-11-28",
-        duree_jours: 22,
-        lieu: "En ligne (Google Meet)",
-        prix: "30000",
-        place_total: null,
-        formateur: null,
-      },
-    ],
-  },
-  {
-    id: "secours-3",
-    nom: "Anglais Professionnel Intensif",
-    description:
-      "Gagnez en fluidité à l'oral pour vos réunions et entretiens professionnels.",
-    categorie: { id: "cat-3", nom: "Langues" },
-    sessions: [
-      {
-        id: "secours-3-a",
-        date_debut: "2026-12-01",
-        date_fin: "2026-12-30",
-        duree_jours: 30,
-        lieu: "Format hybride : Lomé + replay Zoom",
-        prix: "25000",
-        place_total: null,
-        formateur: null,
-      },
-    ],
-  },
-];
-
-/* =====================================================================
    CONVERSION DES DONNÉES DU BACKEND
    Tout ce qui change entre le backend et le site est ici, au même endroit.
    ===================================================================== */
@@ -129,12 +64,12 @@ function formaterPeriode(debut, fin) {
   }
 
   if (d.getFullYear() !== f.getFullYear()) {
-    return `Du ${dateComplete(d)} au ${dateComplete(f)}`;
+    return `Session du ${dateComplete(d)} au ${dateComplete(f)}`;
   }
   if (d.getMonth() === f.getMonth()) {
-    return `Du ${jourFr(d)} au ${dateComplete(f)}`;
+    return `Session du ${jourFr(d)} au ${dateComplete(f)}`;
   }
-  return `Du ${jourFr(d)} ${moisFr(d)} au ${dateComplete(f)}`;
+  return `Session du ${jourFr(d)} ${moisFr(d)} au ${dateComplete(f)}`;
 }
 
 function joursEntre(debut, fin) {
@@ -160,7 +95,6 @@ function adapterSession(session) {
 
   return {
     id: session.id,
-    titre: debut ? `Session du ${dateComplete(debut)}` : "Session de formation",
     dates: formaterPeriode(session.date_debut, session.date_fin),
     duree: libelleJours(
       session.duree_jours ?? joursEntre(session.date_debut, session.date_fin)
@@ -171,6 +105,10 @@ function adapterSession(session) {
         ? prix
         : null,
     placeTotal: session.place_total ?? null,
+    // On récupère la photo propre à cette session depuis l’API.
+    image: session.image ?? null,
+    // La date sert au tri du catalogue lorsque l’API la fournit.
+    createdAt: session.created_at ?? null,
     formateur: session.formateur?.nom_complet ?? null,
   };
 }
@@ -190,7 +128,7 @@ function adapterFormation(formation, sessionsBrutes = []) {
     categorie: formation.categorie?.nom ?? "Autres",
     description: formation.description || "",
     details: media.details ?? formation.description ?? "",
-    image: media.image ?? null,
+    image: formation.image ?? null,
     modalite: media.modalite ?? devinerModalite(sessionsBrutes[0]?.lieu),
     // La durée est calculée par le backend pour chaque session :
     // on affiche celle de la prochaine session.
@@ -211,26 +149,17 @@ async function recupererListe(url, signal) {
   return Array.isArray(donnees) ? donnees : (donnees.results ?? []);
 }
 
-/* Charge les formations publiées puis les sessions de chacune.
-   Ne plante jamais : en cas de problème, renvoie les données de secours. */
+/* Charge les formations publiées et leurs sessions depuis l’API.
+   En cas d’échec, renvoie une erreur au contexte sans inventer de données. */
 export async function chargerFormations(signal) {
   try {
     const liste = await recupererListe("/api/formations/", signal);
-    if (liste.length === 0) {
-      throw new Error("Aucune formation publiée pour le moment");
-    }
-
     const formations = await Promise.all(
       liste.map(async (formation) => {
-        let sessions = [];
-        try {
-          sessions = await recupererListe(
-            `/api/formations/${formation.id}/sessions/`,
-            signal
-          );
-        } catch {
-          sessions = [];
-        }
+        const sessions = await recupererListe(
+          `/api/formations/${formation.id}/sessions/`,
+          signal
+        );
         return adapterFormation(formation, sessions);
       })
     );
@@ -238,13 +167,42 @@ export async function chargerFormations(signal) {
     return { formations, source: "api", erreur: null };
   } catch (erreur) {
     return {
-      formations: DONNEES_SECOURS.map((formation) =>
-        adapterFormation(formation, formation.sessions)
-      ),
-      source: "secours",
+      formations: [],
+      source: "erreur",
       erreur: erreur.message,
     };
   }
+}
+
+/* Aplati les sessions pour que le catalogue affiche chaque session séparément.
+   Les plus récemment créées apparaissent d'abord quand created_at est fourni. */
+export function sessionsDuCatalogue(formations) {
+  return formations
+    .flatMap((formation) =>
+      formation.sessions.map((session) => ({
+        ...session,
+        formationId: formation.id,
+        formationTitre: formation.titre,
+        formationDescription: formation.description,
+        image: session.image ?? formation.image ?? null,
+        categorie: formation.categorie,
+        modalite: formation.modalite,
+      }))
+    )
+    .sort((sessionA, sessionB) => {
+      const dateA = Date.parse(sessionA.createdAt);
+      const dateB = Date.parse(sessionB.createdAt);
+      const aValide = Number.isFinite(dateA);
+      const bValide = Number.isFinite(dateB);
+
+      // Les sessions datées sont classées de la création la plus récente à la plus ancienne.
+      if (aValide && bValide) return dateB - dateA;
+      if (aValide) return -1;
+      if (bValide) return 1;
+
+      // Si l’API n’envoie pas created_at, on garde l’ordre reçu.
+      return 0;
+    });
 }
 
 /* ----- Affichage ----- */

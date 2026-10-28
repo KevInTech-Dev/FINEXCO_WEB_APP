@@ -8,12 +8,14 @@ import ScrollToTop from "./components/ScrollToTop";
 import { AuthProvider } from "./context/AuthContext";
 import { FormationsProvider } from "./context/FormationsContext";
 import Accueil from "./pages/Accueil";
+import Admin from "./pages/Admin";
 import Connexion from "./pages/Connexion";
 import FormationDetail from "./pages/FormationDetail";
 import Formations from "./pages/Formations";
 import Inscription from "./pages/Inscription";
 import InscriptionSession from "./pages/InscriptionSession";
 import PageIntrouvable from "./pages/PageIntrouvable";
+import Profil from "./pages/Profil";
 
 /* Le site est découpé en pages. Chaque adresse (URL) affiche une page :
 
@@ -43,6 +45,8 @@ function App() {
                   element={<InscriptionSession />}
                 />
                 <Route path="/connexion" element={<Connexion />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/profil" element={<Profil />} />
                 <Route path="/inscription" element={<Inscription />} />
                 <Route path="*" element={<PageIntrouvable />} />
               </Routes>

@@ -9,7 +9,45 @@ class FormateurPublicSerializer(serializers.Serializer):
 
     # L'objet reçu ici est l'utilisateur formateur associé à la session.
     def get_nom_complet(self, formateur):
-        return f"{formateur.prenoms} {formateur.nom}"
+        return f"{formateur.nom} {formateur.prenoms}"
+
+
+class FormateurAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Utilisateur
+        fields = ("id", "nom", "prenoms")
+        read_only_fields = fields
+
+
+class FormationAdminResumeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Formation
+        fields = ("id", "nom")
+        read_only_fields = fields
+
+
+class SessionAdminSerializer(serializers.ModelSerializer):
+    formation = FormationAdminResumeSerializer(read_only=True)
+    formateur = FormateurAdminSerializer(read_only=True)
+    duree_jours = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = SessionFormation
+        fields = (
+            "id",
+            "formation",
+            "formateur",
+            "date_debut",
+            "date_fin",
+            "duree_jours",
+            "lieu",
+            "prix",
+            "place_total",
+            "etat",
+            "created_at",
+        )
+        read_only_fields = fields
+
 
 class SessionPubliqueSerializer(serializers.ModelSerializer):
     formation = FormationPubliqueSerializer(read_only=True)
@@ -27,7 +65,10 @@ class SessionPubliqueSerializer(serializers.ModelSerializer):
             "duree_jours",
             "lieu",
             "prix",
+            "image",
             "place_total",
+            "created_at",
+            "updated_at",
         )
         read_only_fields = fields
 

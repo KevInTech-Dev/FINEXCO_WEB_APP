@@ -9,7 +9,8 @@ export function FormationsProvider({ children }) {
   const [etat, setEtat] = useState({
     formations: [],
     chargement: true,
-    source: "api", // "api" ou "secours"
+    source: "api",
+    erreur: null,
   });
 
   useEffect(() => {
@@ -24,6 +25,7 @@ export function FormationsProvider({ children }) {
       setEtat({
         formations: resultat.formations,
         source: resultat.source,
+        erreur: resultat.erreur,
         chargement: false,
       });
 
@@ -32,8 +34,8 @@ export function FormationsProvider({ children }) {
           `[FINEXCO] ${resultat.formations.length} formation(s) chargée(s) depuis le backend.`
         );
       } else {
-        console.warn(
-          "[FINEXCO] Backend indisponible : données de secours affichées.",
+        console.error(
+          "[FINEXCO] Impossible de charger les formations depuis le backend.",
           resultat.erreur
         );
       }

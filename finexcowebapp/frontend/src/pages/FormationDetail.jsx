@@ -183,7 +183,7 @@ export default function FormationDetail() {
           </div>
           <p>
             Choisissez une session puis confirmez votre inscription. Le
-            paiement se fait ensuite sous 72 h.
+            délai exact pour payer s’affichera après l’inscription (72 h maximum).
           </p>
         </aside>
       </div>

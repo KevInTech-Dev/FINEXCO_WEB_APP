@@ -33,6 +33,7 @@ class SessionFormation(models.Model):
     )
     lieu = models.CharField(max_length=255)
     prix = models.DecimalField(max_digits=10, decimal_places=0)
+    image = models.ImageField(upload_to="formations/", blank=True)
 
     class EtatSession(models.TextChoices):
         OUVERTE = "OUVERTE", "Ouverte"

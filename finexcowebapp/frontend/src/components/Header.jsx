@@ -30,9 +30,16 @@ export default function Header() {
       <div className="header-actions">
         {utilisateur ? (
           <>
-            <span className="header-user">
-              Bonjour, <strong>{utilisateur.prenoms}</strong>
-            </span>
+            {utilisateur.role === "ADMIN" && (
+              <Link className="header-button" to="/admin">
+                Administration
+              </Link>
+            )}
+            {utilisateur.role === "APPRENANT" && (
+              <Link className="header-button" to="/profil">
+                Mon profil
+              </Link>
+            )}
             <button className="header-button" onClick={seDeconnecter}>
               Déconnexion
             </button>

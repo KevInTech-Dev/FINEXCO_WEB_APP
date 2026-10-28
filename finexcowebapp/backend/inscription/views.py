@@ -1,12 +1,26 @@
 from rest_framework import generics, permissions
 from .models import Inscription
-from .serializers import CreationInscriptionSerializer
+from .serializers import CreationInscriptionSerializer, InscriptionAdminSerializer
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .services import annuler_inscription
+from utilisateur.permission import EstAdministrateur
+
+
+class InscriptionAdminListView(generics.ListAPIView):
+    serializer_class = InscriptionAdminSerializer
+    permission_classes = [EstAdministrateur]
+
+    def get_queryset(self):
+        return Inscription.objects.select_related(
+            "apprenant",
+            "session",
+            "session__formation",
+            "session__formateur",
+        ).order_by("-date_inscription")
 
 class CreationInscriptionView(generics.ListCreateAPIView):
     serializer_class = CreationInscriptionSerializer

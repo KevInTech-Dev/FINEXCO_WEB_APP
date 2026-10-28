@@ -1,17 +1,19 @@
 import { Link } from "react-router-dom";
-import FormationCard from "../components/FormationCard";
+import SessionCard from "../components/SessionCard";
+import { sessionsDuCatalogue } from "../api/formations";
 import SectionContact from "../components/SectionContact";
 import { DOMAINES } from "../config/infos";
 import { useFormations } from "../context/FormationsContext";
 import useTitre from "../hooks/useTitre";
 
-// Nombre de formations montrées sur l'accueil : les autres sont sur /formations
+// Nombre de sessions montrées sur l’accueil : les autres sont sur /formations.
 const NOMBRE_APERCU = 3;
 
 export default function Accueil() {
   useTitre("");
-  const { formations, chargement } = useFormations();
-  const apercu = formations.slice(0, NOMBRE_APERCU);
+  const { formations, chargement, erreur } = useFormations();
+  const sessions = sessionsDuCatalogue(formations);
+  const apercu = sessions.slice(0, NOMBRE_APERCU);
 
   return (
     <>
@@ -25,7 +27,7 @@ export default function Accueil() {
           </h1>
 
           <p>
-            Découvrez nos formations et ateliers pour renforcer vos
+            Les prochaines sessions et ateliers pour renforcer vos
             compétences et accompagner votre évolution professionnelle.
           </p>
 
@@ -35,8 +37,8 @@ export default function Accueil() {
 
           <div className="hero-stats">
             <div>
-              <strong>{String(formations.length).padStart(2, "0")}</strong>
-              <span>Formations présentées</span>
+              <strong>{String(sessions.length).padStart(2, "0")}</strong>
+              <span>Sessions à venir</span>
             </div>
             <div>
               <strong>100%</strong>
@@ -69,31 +71,45 @@ export default function Accueil() {
       <section className="catalogue section">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">NOS FORMATIONS</span>
-            <h2>Découvrez nos formations</h2>
-            <p>Un aperçu de notre catalogue et de nos prochaines sessions.</p>
+            <span className="eyebrow">NOS SESSIONS</span>
+            <h2>Les prochaines sessions</h2>
+            <p>Les sessions ouvertes et à venir proposées par FINEXCO.</p>
           </div>
         </div>
 
         {chargement && (
           <div className="empty-state page-state" role="status">
-            <h3>Chargement des formations…</h3>
+            <h3>Chargement des sessions…</h3>
             <p>Merci de patienter quelques instants.</p>
           </div>
         )}
 
+        {!chargement && erreur && (
+          <div className="empty-state" role="alert">
+            <h3>Catalogue indisponible</h3>
+            <p>Les sessions ne peuvent pas être chargées depuis le serveur.</p>
+          </div>
+        )}
+
+        {!chargement && !erreur && sessions.length === 0 && (
+          <div className="empty-state">
+            <h3>Aucune session disponible</h3>
+            <p>Il n’y a actuellement aucune session ouverte à venir.</p>
+          </div>
+        )}
+
         <div className="formation-grid">
-          {apercu.map((formation) => (
-            <FormationCard key={formation.id} formation={formation} />
+          {apercu.map((session) => (
+            <SessionCard key={session.id} session={session} />
           ))}
         </div>
 
-        {!chargement && (
+        {!chargement && !erreur && sessions.length > 0 && (
           <div className="section-more">
             <Link className="primary-button" to="/formations">
-              {formations.length > NOMBRE_APERCU
-                ? "Voir plus de formations"
-                : "Voir toutes les formations"}
+              {sessions.length > NOMBRE_APERCU
+                ? "Voir plus de sessions"
+                : "Voir toutes les sessions"}
               <span aria-hidden="true">→</span>
             </Link>
           </div>
