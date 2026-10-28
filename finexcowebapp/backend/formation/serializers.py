@@ -24,3 +24,26 @@ class FormationPubliqueSerializer(serializers.ModelSerializer):
             "categorie",
         )
         read_only_fields = fields
+
+class FormationAdminSerializer(serializers.ModelSerializer):
+    categorie = serializers.PrimaryKeyRelatedField(
+        queryset=Categorie.objects.all()
+    )
+
+    categorie_nom = serializers.CharField(source="Categorie.nom", read_only=True)
+
+    class Meta:
+        model = Formation
+
+        fields = (
+            "id",
+            "nom",
+            "description",
+            "categorie",
+            "categorie_nom",
+            "etat_publication",
+            "created_at",
+            "updated_at",
+        )
+
+        read_only_fields = ("id", "categorie_nom", "created_at", "updated_at")

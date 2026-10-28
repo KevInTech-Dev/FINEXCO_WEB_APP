@@ -8,7 +8,6 @@ from .services import refuser_paiement, valider_paiement
 
 
 class PaiementActionForm(ActionForm):
-    # Ce champ permet à l'admin de fournir un motif quand il choisit l'action de refus.
     motif_refus = forms.CharField(
         label="Motif du refus",
         required=False,
@@ -43,11 +42,9 @@ class PaiementAdmin(admin.ModelAdmin):
         "updated_at",
     )
 
-    # Ajout du champ du motif au formulaire des actions d'administration.
     action_form = PaiementActionForm
     actions = ("valider_paiements", "refuser_paiements")
 
-    # Empêcher la création manuelle d'un paiement depuis l'admin.
     def has_add_permission(self, request):
         return False
 
@@ -109,7 +106,6 @@ class PaiementAdmin(admin.ModelAdmin):
                     level=messages.ERROR,
                 )
 
-        # Nbre de paiements refusés.
         if nombre_refuses:
             self.message_user(
                 request,

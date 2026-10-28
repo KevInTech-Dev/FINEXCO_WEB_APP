@@ -30,6 +30,6 @@ class AnnulationInscriptionView(APIView):
                 apprenant=request.user,
             )
         except DjangoValidationError as erreur:
-            raise serializers.ValidationError({"detail:": erreur.messages})
+            raise serializers.ValidationError({"detail": erreur.messages})
 
         return Response(CreationInscriptionSerializer(inscription).data)

@@ -1,8 +1,10 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
-
+from inscription.models import Inscription
 from .models import Paiement
 from .services import soumettre_paiement
+from session_formation.serializers import SessionPubliqueSerializer
+from utilisateur.serializers import ProfilUtilisateurSerializer
 
 class SoumissionPaiementSerializer(serializers.Serializer):
       inscription_id = serializers.UUIDField(write_only=True)
@@ -43,3 +45,81 @@ class PaiementTraitementSerializer(serializers.ModelSerializer):
 
 class MotifRefusSerializer(serializers.Serializer):
       motif = serializers.CharField()
+
+class InscriptionPaiementAdminSerializer(serializers.ModelSerializer):
+      apprenant = ProfilUtilisateurSerializer(read_only=True)
+      session = SessionPubliqueSerializer(read_only=True)
+
+      class Meta:
+            model = Inscription
+
+            fields = (
+                  "id",
+                  "apprenant",
+                  "session",
+                  "date_inscription",
+                  "date_limite_paiement",
+                  "statut",
+            )
+
+            read_only_fields = fields
+
+class PaiementAdminSerializer(serializers.ModelSerializer):
+      inscription = InscriptionPaiementAdminSerializer(read_only=True)
+
+      traite_par = ProfilUtilisateurSerializer(read_only=True)
+      class Meta:
+            model = Paiement
+
+            fields = (
+                  "id",
+                  "inscription",
+                  "montant",
+                  "mode",
+                  "preuve_paiement",
+                  "statut",
+                  "motif_refus",
+                  "traite_par",
+                  "date_traitement",
+                  "created_at",
+                  "updated_at",
+            )
+
+            read_only_fields = fields
+
+class InscriptionHistoriquePaiementSerializer(serializers.ModelSerializer):
+    session = SessionPubliqueSerializer(read_only=True)
+
+    class Meta:
+        model = Inscription
+
+        fields = (
+            "id",
+            "session",
+            "date_inscription",
+            "date_limite_paiement",
+            "statut",
+        )
+
+        read_only_fields = fields
+
+
+class HistoriquePaiementSerializer(serializers.ModelSerializer):
+    inscription = InscriptionHistoriquePaiementSerializer(read_only=True)
+
+    class Meta:
+        model = Paiement
+
+        fields = (
+            "id",
+            "inscription",
+            "montant",
+            "mode",
+            "preuve_paiement",
+            "statut",
+            "motif_refus",
+            "date_traitement",
+            "created_at",
+        )
+
+        read_only_fields = fields

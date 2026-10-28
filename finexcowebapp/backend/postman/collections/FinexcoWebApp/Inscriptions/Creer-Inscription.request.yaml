@@ -1,7 +1,7 @@
 $kind: http-request
-name: "Créer une Inscription"
+name: "Mes Inscriptions (Liste)"
 order: 1000
-method: POST
+method: GET
 url: '{{base_url}}/api/inscriptions/'
 auth:
   type: bearer

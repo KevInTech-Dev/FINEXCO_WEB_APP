@@ -11,7 +11,6 @@ class Paiement(models.Model):
         TMONEY = "TMONEY", "TMoney"
 
     class Statut(models.TextChoices):
-        INITIE = "INITIE", "Initié"
         A_VERIFIER = "A_VERIFIER", "À vérifier"
         VALIDE = "VALIDE", "Validé"
         REFUSE = "REFUSE", "Refusé"
@@ -46,7 +45,7 @@ class Paiement(models.Model):
     statut = models.CharField(
         max_length=12,
         choices=Statut.choices,
-        default=Statut.INITIE,
+        default=Statut.A_VERIFIER,
     )
     motif_refus = models.TextField(blank=True)
     date_traitement = models.DateTimeField(null=True, blank=True)
