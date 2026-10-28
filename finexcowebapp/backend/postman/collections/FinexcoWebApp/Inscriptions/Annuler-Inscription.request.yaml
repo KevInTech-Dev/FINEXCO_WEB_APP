@@ -1,0 +1,10 @@
+$kind: http-request
+name: "Annuler une Inscription"
+order: 2000
+method: POST
+url: '{{base_url}}/api/inscriptions/{{inscription_id}}/annuler/'
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{access_token}}'

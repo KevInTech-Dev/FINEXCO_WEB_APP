@@ -91,8 +91,6 @@ def expirer_inscriptions():
         created_at__lte=F("inscription__date_limite_paiement"),
     ).values("inscription_id")
 
-    # On expire les inscriptions en attente dont le délai est passé,
-    # sauf celles qui ont une preuve déposée à temps et toujours en vérification.
     return Inscription.objects.filter(
         statut__in=(
             Inscription.Statut.EN_ATTENTE_PAIEMENT,
@@ -110,7 +108,7 @@ def expirer_inscriptions():
 def annuler_inscription(*, inscription_id, apprenant):
     inscription = (
         Inscription.objects.select_for_update()
-        .select_relate("session__formation__categorie", "session_formateur")
+        .select_related("session__formation__categorie", "session__formateur")
         .filter(id=inscription_id, apprenant=apprenant)
         .first()
     )

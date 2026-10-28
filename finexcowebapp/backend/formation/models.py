@@ -18,7 +18,6 @@ class Categorie(models.Model):
 class Formation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     class EtatPublication(models.TextChoices):
-        BROUILLON = "BROUILLON", "Brouillon"
         PUBLIE = "PUBLIE", "Publié"
         ARCHIVE = "ARCHIVE", "Archivé"
 
@@ -29,7 +28,7 @@ class Formation(models.Model):
     etat_publication = models.CharField(
         max_length=10,
         choices=EtatPublication.choices,
-        default=EtatPublication.BROUILLON,
+        default=EtatPublication.PUBLIE,
     )
 
     categorie = models.ForeignKey(

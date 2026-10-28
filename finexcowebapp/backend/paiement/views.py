@@ -1,17 +1,18 @@
 from rest_framework import generics, permissions
-from .serializers import SoumissionPaiementSerializer
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from utilisateur.permission import EstAdministrateur
-from .models import Paiement
 from .serializers import (
     MotifRefusSerializer,
     PaiementTraitementSerializer,
+    PaiementAdminSerializer,
+    SoumissionPaiementSerializer, 
+    HistoriquePaiementSerializer,
 )
+from .selectors import paiements_a_verifier, paiements_de_apprenant, tous_les_paiements
 from .services import valider_paiement, refuser_paiement
 
 
@@ -55,4 +56,25 @@ class RefusPaiementView(APIView):
         return Response(PaiementTraitementSerializer(
             paiement, context={"request": request}
         ).data)
-        
+
+class PaiementAVerifierView(generics.ListAPIView):
+    serializer_class = PaiementAdminSerializer
+    permission_classes = [EstAdministrateur]
+
+    def get_queryset(self):
+        return paiements_a_verifier()
+
+class MesPaiementsView(generics.ListAPIView):
+    serializer_class = HistoriquePaiementSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return paiements_de_apprenant(apprenant=self.request.user)
+
+
+class TousLesPaiementsView(generics.ListAPIView):
+    serializer_class = PaiementAdminSerializer
+    permission_classes = [EstAdministrateur]
+
+    def get_queryset(self):
+        return tous_les_paiements()
