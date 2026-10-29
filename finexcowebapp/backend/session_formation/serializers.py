@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 from formation.serializers import FormationPubliqueSerializer
 from .models import SessionFormation
 from formation.models import Formation
@@ -15,8 +17,39 @@ class FormateurPublicSerializer(serializers.Serializer):
 class FormateurAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Utilisateur
-        fields = ("id", "nom", "prenoms")
+        fields = ("id", "nom", "prenoms", "email")
         read_only_fields = fields
+
+
+class CreationFormateurAdminSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8)
+
+    class Meta:
+        model = Utilisateur
+        fields = ("id", "nom", "prenoms", "email", "telephone", "password")
+        read_only_fields = ("id",)
+
+    def validate(self, attrs):
+        candidat = Utilisateur(
+            nom=attrs["nom"],
+            prenoms=attrs["prenoms"],
+            email=attrs["email"],
+            telephone=attrs["telephone"],
+        )
+        try:
+            validate_password(attrs["password"], user=candidat)
+        except DjangoValidationError as erreur:
+            raise serializers.ValidationError({"password": erreur.messages})
+        return attrs
+
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        return Utilisateur.objects.create_user(
+            **validated_data,
+            password=password,
+            role=Utilisateur.Role.FORMATEUR,
+            doit_changer_mot_de_passe=True,
+        )
 
 
 class FormationAdminResumeSerializer(serializers.ModelSerializer):
@@ -43,6 +76,7 @@ class SessionAdminSerializer(serializers.ModelSerializer):
             "lieu",
             "prix",
             "place_total",
+            "image",
             "etat",
             "created_at",
         )
@@ -92,7 +126,8 @@ class SessionCreationSerializer(serializers.ModelSerializer):
             "duree_jours",
             "lieu",
             "prix",
-            "place_total"
+            "place_total",
+            "image",
         )
 
         read_only_fields = ("id", "duree_jours")
@@ -107,3 +142,8 @@ class SessionCreationSerializer(serializers.ModelSerializer):
             })
 
         return donnees
+
+
+class SessionAdminModificationSerializer(SessionCreationSerializer):
+    class Meta(SessionCreationSerializer.Meta):
+        fields = SessionCreationSerializer.Meta.fields + ("etat",)

@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
     FormateurAdminListView,
+    SessionAdminDetailView,
     SessionAdminListView,
     SessionCreationView,
     SessionPubliqueListView,
@@ -17,6 +18,11 @@ urlpatterns = [
         "admin/sessions/",
         SessionAdminListView.as_view(),
         name="admin-sessions",
+    ),
+    path(
+        "admin/sessions/<uuid:pk>/",
+        SessionAdminDetailView.as_view(),
+        name="admin-session-detail",
     ),
     path(
         "formations/<uuid:formation_id>/sessions/",

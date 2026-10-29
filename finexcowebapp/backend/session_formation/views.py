@@ -1,7 +1,9 @@
 from rest_framework import generics, permissions
 from .selectors import sessions_publiques
 from .serializers import (
+    CreationFormateurAdminSerializer,
     FormateurAdminSerializer,
+    SessionAdminModificationSerializer,
     SessionAdminSerializer,
     SessionCreationSerializer,
     SessionPubliqueSerializer,
@@ -24,9 +26,13 @@ class SessionCreationView(generics.CreateAPIView):
     permission_classes = [EstAdministrateur]
 
 
-class FormateurAdminListView(generics.ListAPIView):
-    serializer_class = FormateurAdminSerializer
+class FormateurAdminListView(generics.ListCreateAPIView):
     permission_classes = [EstAdministrateur]
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return CreationFormateurAdminSerializer
+        return FormateurAdminSerializer
 
     def get_queryset(self):
         return Utilisateur.objects.filter(
@@ -43,3 +49,9 @@ class SessionAdminListView(generics.ListAPIView):
             "formation",
             "formateur",
         ).order_by("-date_debut", "formation__nom")
+
+
+class SessionAdminDetailView(generics.RetrieveUpdateAPIView):
+    serializer_class = SessionAdminModificationSerializer
+    permission_classes = [EstAdministrateur]
+    queryset = SessionFormation.objects.all()

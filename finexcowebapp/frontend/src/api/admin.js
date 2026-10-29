@@ -12,6 +12,14 @@ export async function chargerFormateursApi(jeton) {
   return listeApi(await appeler("/api/admin/formateurs/", { jeton }));
 }
 
+export async function creerFormateurApi(jeton, donnees) {
+  return appeler("/api/admin/formateurs/", {
+    methode: "POST",
+    corps: donnees,
+    jeton,
+  });
+}
+
 export async function chargerSessionsAdminApi(jeton) {
   return listeApi(await appeler("/api/admin/sessions/", { jeton }));
 }
@@ -43,6 +51,14 @@ export async function modifierFormationAdminApi(jeton, id, donnees) {
 export async function creerSessionAdminApi(jeton, donnees) {
   return appeler("/api/sessions/", {
     methode: "POST",
+    corps: donnees,
+    jeton,
+  });
+}
+
+export async function modifierSessionAdminApi(jeton, id, donnees) {
+  return appeler(`/api/admin/sessions/${id}/`, {
+    methode: "PATCH",
     corps: donnees,
     jeton,
   });

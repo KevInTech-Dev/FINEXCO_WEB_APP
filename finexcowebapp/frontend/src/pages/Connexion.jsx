@@ -24,7 +24,18 @@ export default function Connexion() {
   const [envoi, setEnvoi] = useState(false);
 
   // Déjà connecté : inutile de rester ici.
-  if (utilisateur) return <Navigate to={destination} replace />;
+  if (utilisateur) {
+    return (
+      <Navigate
+        to={
+          utilisateur.doit_changer_mot_de_passe
+            ? "/premiere-connexion"
+            : destination
+        }
+        replace
+      />
+    );
+  }
 
   function valider() {
     const problemes = {};

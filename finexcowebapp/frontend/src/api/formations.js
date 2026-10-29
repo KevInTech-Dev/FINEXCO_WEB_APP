@@ -128,7 +128,7 @@ function adapterFormation(formation, sessionsBrutes = []) {
     categorie: formation.categorie?.nom ?? "Autres",
     description: formation.description || "",
     details: media.details ?? formation.description ?? "",
-    image: formation.image ?? null,
+    image: formation.image ?? sessions[0]?.image ?? media.image ?? null,
     modalite: media.modalite ?? devinerModalite(sessionsBrutes[0]?.lieu),
     // La durée est calculée par le backend pour chaque session :
     // on affiche celle de la prochaine session.

@@ -59,6 +59,7 @@ class FormateurAdminListTests(APITestCase):
                     "id": str(self.formateur.id),
                     "nom": "Mensah",
                     "prenoms": "Kofi",
+                    "email": "formateur@example.com",
                 }
             ],
         )
@@ -92,5 +93,56 @@ class FormateurAdminListTests(APITestCase):
         self.client.force_authenticate(user=apprenant)
 
         response = self.client.get(reverse("admin-sessions"))
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_administrateur_peut_mettre_a_jour_et_fermer_une_session(self):
+        self.client.force_authenticate(user=self.administrateur)
+
+        response = self.client.patch(
+            reverse("admin-session-detail", kwargs={"pk": self.session.id}),
+            {"etat": SessionFormation.EtatSession.FERMEE},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.session.refresh_from_db()
+        self.assertEqual(self.session.etat, SessionFormation.EtatSession.FERMEE)
+
+    def test_administrateur_peut_creer_un_formateur(self):
+        self.client.force_authenticate(user=self.administrateur)
+
+        response = self.client.post(
+            reverse("admin-formateurs"),
+            {
+                "email": "nouveau.formateur@example.com",
+                "nom": "Doe",
+                "prenoms": "Jane",
+                "telephone": "93333333",
+                "password": "SecureTrainerPass938!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 201)
+        formateur = get_user_model().objects.get(
+            email="nouveau.formateur@example.com"
+        )
+        self.assertEqual(formateur.role, get_user_model().Role.FORMATEUR)
+        self.assertTrue(formateur.check_password("SecureTrainerPass938!"))
+        self.assertTrue(formateur.doit_changer_mot_de_passe)
+
+    def test_apprenant_ne_peut_pas_creer_un_formateur(self):
+        apprenant = get_user_model().objects.get(email="apprenant@example.com")
+        self.client.force_authenticate(user=apprenant)
+
+        response = self.client.post(
+            reverse("admin-formateurs"),
+            {
+                "email": "interdit@example.com",
+                "nom": "Doe",
+                "prenoms": "Jane",
+                "telephone": "93333333",
+                "password": "SecureTrainerPass938!",
+            },
+        )
 
         self.assertEqual(response.status_code, 403)

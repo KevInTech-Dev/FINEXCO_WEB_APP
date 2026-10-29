@@ -27,6 +27,15 @@ a.header-button {
   color: var(--rose);
 }
 
+.auth-session-warning {
+  padding: 10px 7%;
+  color: #8d254d;
+  background: #f8eaf0;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
 /* Page courante dans le menu : rose avec trait complet */
 .navigation a.active {
   color: var(--rose);

@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .services import annuler_inscription
-from utilisateur.permission import EstAdministrateur
+from utilisateur.permission import EstAdministrateur, MotDePassePersonnelDefini
 
 
 class InscriptionAdminListView(generics.ListAPIView):
@@ -25,7 +25,7 @@ class InscriptionAdminListView(generics.ListAPIView):
 class CreationInscriptionView(generics.ListCreateAPIView):
     serializer_class = CreationInscriptionSerializer
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, MotDePassePersonnelDefini]
 
     def get_queryset(self):
         return (
@@ -35,7 +35,7 @@ class CreationInscriptionView(generics.ListCreateAPIView):
         )
 
 class AnnulationInscriptionView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, MotDePassePersonnelDefini]
 
     def post(self, request, inscription_id):
         try:
