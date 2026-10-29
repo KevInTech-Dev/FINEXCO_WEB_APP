@@ -1,0 +1,10 @@
+$kind: http-request
+name: "[Admin] Liste des Sessions"
+order: 4000
+method: GET
+url: '{{base_url}}/api/admin/sessions/'
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{access_token}}'
