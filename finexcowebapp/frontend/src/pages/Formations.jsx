@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import SessionCard from "../components/SessionCard";
-import { sessionsDuCatalogue } from "../api/formations";
+import FormationCard from "../components/FormationCard";
 import { useFormations } from "../context/FormationsContext";
 import useTitre from "../hooks/useTitre";
 
@@ -10,8 +9,7 @@ import useTitre from "../hooks/useTitre";
    ce qui permet de partager un lien déjà filtré. */
 export default function Formations() {
   useTitre("Formations");
-  const { formations, chargement, erreur } = useFormations();
-  const sessions = sessionsDuCatalogue(formations);
+  const { formations, chargement } = useFormations();
   const navigate = useNavigate();
   const { search } = useLocation();
   const [recherche, setRecherche] = useState("");
@@ -19,7 +17,7 @@ export default function Formations() {
   const categorie = new URLSearchParams(search).get("categorie") || "Toutes";
   const categories = [
     "Toutes",
-    ...new Set(sessions.map((session) => session.categorie)),
+    ...new Set(formations.map((formation) => formation.categorie)),
   ];
 
   function choisirCategorie(nom) {
@@ -31,19 +29,13 @@ export default function Formations() {
     );
   }
 
-  const sessionsFiltrees = sessions.filter((session) => {
+  const formationsFiltrees = formations.filter((formation) => {
     const texte = recherche.toLowerCase();
-    const correspondRecherche = [
-      session.formationTitre,
-      session.formationDescription,
-      session.dates,
-      session.lieu,
-      session.formateur,
-    ]
-      .filter(Boolean)
-      .some((valeur) => valeur.toLowerCase().includes(texte));
+    const correspondRecherche =
+      formation.titre.toLowerCase().includes(texte) ||
+      formation.description.toLowerCase().includes(texte);
     const correspondCategorie =
-      categorie === "Toutes" || session.categorie === categorie;
+      categorie === "Toutes" || formation.categorie === categorie;
 
     return correspondRecherche && correspondCategorie;
   });
@@ -53,21 +45,24 @@ export default function Formations() {
       <div className="section-heading">
         <div>
           <span className="eyebrow">NOTRE CATALOGUE</span>
-          <h2>Nos sessions de formation</h2>
-          <p>Consultez les dates, le lieu et le tarif de chaque session.</p>
+          <h2>Nos formations</h2>
+          <p>
+            Choisissez une formation pour consulter son programme et ses
+            sessions.
+          </p>
         </div>
         <span className="formation-count">
-          {sessionsFiltrees.length} session(s)
+          {formationsFiltrees.length} formation(s)
         </span>
       </div>
 
       <div className="catalogue-tools">
         <input
           type="search"
-          placeholder="Rechercher une session, une formation ou un lieu..."
+          placeholder="Rechercher une formation..."
           value={recherche}
           onChange={(event) => setRecherche(event.target.value)}
-          aria-label="Rechercher une session, une formation ou un lieu"
+          aria-label="Rechercher une formation"
         />
 
         <div className="category-filters">
@@ -85,28 +80,21 @@ export default function Formations() {
 
       {chargement && (
         <div className="empty-state page-state" role="status">
-          <h3>Chargement des sessions…</h3>
+          <h3>Chargement des formations…</h3>
           <p>Merci de patienter quelques instants.</p>
         </div>
       )}
 
-      {!chargement && erreur && (
-        <div className="empty-state" role="alert">
-          <h3>Catalogue indisponible</h3>
-          <p>Les sessions ne peuvent pas être chargées depuis le serveur.</p>
-        </div>
-      )}
-
       <div className="formation-grid">
-        {sessionsFiltrees.map((session) => (
-          <SessionCard key={session.id} session={session} />
+        {formationsFiltrees.map((formation) => (
+          <FormationCard key={formation.id} formation={formation} />
         ))}
       </div>
 
-      {!chargement && !erreur && sessionsFiltrees.length === 0 && (
+      {!chargement && formationsFiltrees.length === 0 && (
         <div className="empty-state">
-          <h3>Aucune session disponible</h3>
-          <p>Il n’y a actuellement aucune session correspondant à ces critères.</p>
+          <h3>Aucune formation trouvée</h3>
+          <p>Essayez un autre mot-clé ou une autre catégorie.</p>
           <button
             className="secondary-button"
             onClick={() => {

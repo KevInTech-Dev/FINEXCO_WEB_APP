@@ -1,15 +1,10 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import MenuProfil from "./MenuProfil";
 
 /* Barre de navigation du haut, sur toutes les pages. */
 export default function Header() {
-  const { utilisateur, deconnexion } = useAuth();
-  const navigate = useNavigate();
-
-  function seDeconnecter() {
-    deconnexion();
-    navigate("/");
-  }
+  const { utilisateur } = useAuth();
 
   return (
     <header className="site-header">
@@ -24,26 +19,14 @@ export default function Header() {
           Accueil
         </NavLink>
         <NavLink to="/formations">Formations</NavLink>
+        <NavLink to="/qui-sommes-nous">Qui sommes-nous</NavLink>
+        <NavLink to="/services">Nos services</NavLink>
         <Link to="/#contact">Contact</Link>
       </nav>
 
       <div className="header-actions">
         {utilisateur ? (
-          <>
-            {utilisateur.role === "ADMIN" && (
-              <Link className="header-button" to="/admin">
-                Administration
-              </Link>
-            )}
-            {utilisateur.role === "APPRENANT" && (
-              <Link className="header-button" to="/profil">
-                Mon profil
-              </Link>
-            )}
-            <button className="header-button" onClick={seDeconnecter}>
-              Déconnexion
-            </button>
-          </>
+          <MenuProfil />
         ) : (
           <>
             <Link className="header-button" to="/connexion">

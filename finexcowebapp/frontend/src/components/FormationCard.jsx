@@ -32,7 +32,6 @@ export default function FormationCard({ formation }) {
             <strong>Tarif</strong>
             {libellePrix(formation)}
           </span>
-          
         </div>
 
         <Link className="card-link" to={`/formations/${formation.id}`}>

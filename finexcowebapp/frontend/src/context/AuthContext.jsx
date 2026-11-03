@@ -117,6 +117,22 @@ export function AuthProvider({ children }) {
     }
   }
 
+  /* APERÇU (développement uniquement) : fait comme si un apprenant était
+     connecté, sans serveur. Sert à voir les pages qui demandent une connexion.
+     ➜ À supprimer avant la présentation, avec la page Apercu.jsx. */
+  function ouvrirApercu() {
+    const faux = {
+      id: "apercu",
+      nom: "Démo",
+      prenoms: "Aperçu",
+      email: "apercu@finexco.test",
+      telephone: "90 00 00 00",
+      role: "APPRENANT",
+    };
+    setUtilisateur(faux);
+    return faux;
+  }
+
   // Pour les prochaines étapes (inscription à une session, paiement)
   function jetonAcces() {
     return lireJetons()?.access ?? null;
@@ -132,6 +148,7 @@ export function AuthProvider({ children }) {
         deconnexion,
         jetonAcces,
         appelAuthentifie,
+        ouvrirApercu,
       }}
     >
       {children}

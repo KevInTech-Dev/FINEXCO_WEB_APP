@@ -112,6 +112,12 @@ export default function Footer() {
             <li>
               <Link to="/formations">Nos formations</Link>
             </li>
+            <li>
+              <Link to="/qui-sommes-nous">Qui sommes-nous</Link>
+            </li>
+            <li>
+              <Link to="/services">Nos services</Link>
+            </li>
             {!utilisateur && (
               <>
                 <li>

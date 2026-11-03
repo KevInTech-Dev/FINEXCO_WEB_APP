@@ -29,3 +29,16 @@ export const DOMAINES = [
 ];
 
 export const LIEN_WHATSAPP = `https://wa.me/${INFOS.whatsapp.replace(/\D/g, "")}`;
+
+/* Paiement par Mobile Money.
+   Les clients envoient l'argent à ce numéro, puis déposent la capture du reçu.
+   ➜ Pour changer un numéro ou le nom du titulaire, modifiez-le ici seulement.
+   Laissez "" si le numéro d'un mode n'est pas encore connu : la page
+   proposera alors de contacter FINEXCO sur WhatsApp. */
+export const PAIEMENT = {
+  titulaire: "Directeur de FINEXCO", // à remplacer par le nom exact du compte
+  numeros: {
+    FLOOZ: "97 84 83 61",
+    TMONEY: "",
+  },
+};

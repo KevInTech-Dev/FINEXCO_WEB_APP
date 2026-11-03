@@ -3,26 +3,18 @@ import { Link, Navigate, useLocation, useParams } from "react-router-dom";
 import { analyserErreur } from "../api/auth";
 import { formatPrix } from "../api/formations";
 import { creerInscriptionApi } from "../api/inscriptions";
-import { soumettrePaiementApi } from "../api/paiements";
+import {
+  enregistrerInscription,
+  trouverParSession,
+} from "../api/inscriptionsLocales";
 import { useAuth } from "../context/AuthContext";
 import { useFormations } from "../context/FormationsContext";
 import useTitre from "../hooks/useTitre";
-
-function formaterDateHeure(valeur) {
-  const date = new Date(valeur);
-  if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+import { formaterDateHeure } from "../utils/dates";
 
 /* Page /formations/:id/sessions/:sessionId/inscription
    Inscription d'une personne connectée à une session : elle vérifie le
-   récapitulatif, puis confirme. Le backend réserve la place jusqu’à l’échéance calculée (72 h maximum, sans dépasser la clôture de la session),
+   récapitulatif, puis confirme. Le backend réserve alors la place pour 72 h,
    le temps de payer. */
 export default function InscriptionSession() {
   useTitre("Inscription à une session");
@@ -35,12 +27,6 @@ export default function InscriptionSession() {
   const [envoi, setEnvoi] = useState(false);
   const [erreur, setErreur] = useState("");
   const [inscription, setInscription] = useState(null);
-  // Ces états décrivent le formulaire manuel et la réponse du backend.
-  const [modePaiement, setModePaiement] = useState("FLOOZ");
-  const [preuvePaiement, setPreuvePaiement] = useState(null);
-  const [paiement, setPaiement] = useState(null);
-  const [erreurPaiement, setErreurPaiement] = useState("");
-  const [envoiPaiement, setEnvoiPaiement] = useState(false);
 
   if (chargement || verification) {
     return (
@@ -73,6 +59,8 @@ export default function InscriptionSession() {
     (item) => String(item.id) === sessionId
   );
 
+  const dejaLocale = session ? trouverParSession(utilisateur.id, String(session.id)) : null;
+
   if (!formation || !session) {
     return (
       <section className="detail-page">
@@ -101,6 +89,19 @@ export default function InscriptionSession() {
     );
   }
 
+  // Affiche l'écran de réussite et garde l'inscription pour la page de paiement.
+  function garder(reponse) {
+    enregistrerInscription(utilisateur.id, {
+      id: reponse.id,
+      formationId: String(id),
+      sessionId: String(session.id),
+      dateLimite: reponse.date_limite_paiement,
+      preuveEnvoyee: false,
+      demo: Boolean(reponse.demo),
+    });
+    setInscription(reponse);
+  }
+
   async function confirmer(event) {
     event.preventDefault();
     if (!accepte) {
@@ -114,8 +115,8 @@ export default function InscriptionSession() {
       // Données de démonstration : pas de vrai serveur, on simule la réponse.
       if (source !== "api") {
         const limite = new Date(Date.now() + 72 * 3600 * 1000).toISOString();
-        setInscription({
-          id: "demo",
+        garder({
+          id: `demo-${Date.now()}`,
           statut: "EN_ATTENTE_PAIEMENT",
           date_limite_paiement: limite,
           demo: true,
@@ -126,39 +127,12 @@ export default function InscriptionSession() {
       const reponse = await appelAuthentifie((jeton) =>
         creerInscriptionApi(jeton, session.id)
       );
-      setInscription(reponse);
+      garder(reponse);
     } catch (e) {
       const { champs, general } = analyserErreur(e);
       setErreur(general || Object.values(champs).join(" "));
     } finally {
       setEnvoi(false);
-    }
-  }
-
-  // Cette fonction envoie le mode et la capture au service de paiement.
-  async function envoyerPreuve(event) {
-    event.preventDefault();
-    if (!preuvePaiement) {
-      setErreurPaiement("Sélectionnez la capture de votre paiement.");
-      return;
-    }
-
-    setErreurPaiement("");
-    setEnvoiPaiement(true);
-    try {
-      const reponse = await appelAuthentifie((jeton) =>
-        soumettrePaiementApi(jeton, {
-          inscriptionId: inscription.id,
-          mode: modePaiement,
-          preuvePaiement,
-        })
-      );
-      setPaiement(reponse);
-    } catch (e) {
-      const { champs, general } = analyserErreur(e);
-      setErreurPaiement(general || Object.values(champs).join(" "));
-    } finally {
-      setEnvoiPaiement(false);
     }
   }
 
@@ -198,62 +172,10 @@ export default function InscriptionSession() {
             </div>
           )}
 
-          {inscription.demo ? (
-            <div className="demo-message">
-              Le dépôt de preuve sera disponible lorsque le backend sera connecté.
-            </div>
-          ) : paiement ? (
-            <div className="form-info" role="status">
-              Votre preuve a bien été envoyée. Le paiement est en attente de
-              vérification par l’équipe FINEXCO.
-            </div>
-          ) : (
-            <form className="auth-form paiement-form" onSubmit={envoyerPreuve} noValidate>
-              <h2>Envoyer la preuve de paiement</h2>
-              <p>
-                Effectuez le dépôt sur le numéro Flooz ou Tmoney communiqué par
-                l’agence, puis joignez la capture du reçu. Le montant est celui
-                indiqué ci-dessus.<br/> N° FLOOZ = 96 01 00 02 <br/> N° TMoney = 70 01 00 02
-              </p>
-
-              <div className="champ">
-                <label htmlFor="mode-paiement">Mode de paiement</label>
-                <select
-                  id="mode-paiement"
-                  value={modePaiement}
-                  onChange={(event) => setModePaiement(event.target.value)}
-                >
-                  <option value="FLOOZ">Flooz</option>
-                  <option value="TMONEY">TMoney</option>
-                </select>
-              </div>
-
-              <div className="champ">
-                <label htmlFor="preuve-paiement">Capture du reçu</label>
-                <input
-                  id="preuve-paiement"
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) => {
-                    setPreuvePaiement(event.target.files?.[0] ?? null);
-                    setErreurPaiement("");
-                  }}
-                />
-              </div>
-
-              {erreurPaiement && (
-                <div className="form-alerte" role="alert">
-                  {erreurPaiement}
-                </div>
-              )}
-
-              <button className="primary-button" type="submit" disabled={envoiPaiement}>
-                {envoiPaiement ? "Envoi en cours…" : "Envoyer la preuve"}
-              </button>
-            </form>
-          )}
-
           <div className="inscription-actions">
+            <Link className="primary-button" to={`/paiement/${inscription.id}`}>
+              Payer maintenant
+            </Link>
             <Link className="header-button" to="/formations">
               Voir d'autres formations
             </Link>
@@ -335,7 +257,7 @@ export default function InscriptionSession() {
           <h2>Comment ça se passe ?</h2>
           <ol className="etapes-liste">
             <li>Vous confirmez votre inscription : la place est réservée.</li>
-            <li>Vous avez jusqu’à 72 h pour payer. L’échéance exacte s’affichera après l’inscription.</li>
+            <li>Vous avez 72 h pour effectuer le paiement.</li>
             <li>
               Après vérification du paiement par notre équipe, votre
               inscription est confirmée.
@@ -351,6 +273,14 @@ export default function InscriptionSession() {
           {erreur && (
             <div className="form-alerte" role="alert">
               {erreur}
+              {dejaLocale && (
+                <>
+                  {" "}
+                  <Link to={`/paiement/${dejaLocale.id}`}>
+                    Continuer vers le paiement
+                  </Link>
+                </>
+              )}
             </div>
           )}
 
@@ -365,7 +295,7 @@ export default function InscriptionSession() {
             />
             <span>
               Je confirme mon inscription à cette session et je comprends que
-              l’échéance affichée après l’inscription est le délai à respecter (72 h maximum).
+              le paiement est à effectuer sous 72 h.
             </span>
           </label>
 
