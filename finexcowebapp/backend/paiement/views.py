@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from utilisateur.permission import EstAdministrateur
+from utilisateur.permission import EstAdministrateur, MotDePassePersonnelDefini
 from .serializers import (
     MotifRefusSerializer,
     PaiementTraitementSerializer,
@@ -18,7 +18,7 @@ from .services import valider_paiement, refuser_paiement
 
 class SoumissionPaiementView(generics.CreateAPIView):
     serializer_class = SoumissionPaiementSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, MotDePassePersonnelDefini]
 
 class ValidationPaiementView(APIView):
     permission_classes = [EstAdministrateur]
@@ -66,7 +66,7 @@ class PaiementAVerifierView(generics.ListAPIView):
 
 class MesPaiementsView(generics.ListAPIView):
     serializer_class = HistoriquePaiementSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, MotDePassePersonnelDefini]
 
     def get_queryset(self):
         return paiements_de_apprenant(apprenant=self.request.user)

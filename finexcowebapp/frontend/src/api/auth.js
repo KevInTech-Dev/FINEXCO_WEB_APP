@@ -92,6 +92,13 @@ export const inscriptionApi = (donnees) =>
 
 export const profilApi = (jeton) => appeler("/api/auth/me/", { jeton });
 
+export const changerMotDePasseInitialApi = (jeton, nouveauMotDePasse) =>
+  appeler("/api/auth/mot-de-passe-initial/", {
+    methode: "POST",
+    corps: { nouveau_mot_de_passe: nouveauMotDePasse },
+    jeton,
+  });
+
 export const rafraichirApi = (refresh) =>
   appeler("/api/auth/rafraichir/", { methode: "POST", corps: { refresh } });
 

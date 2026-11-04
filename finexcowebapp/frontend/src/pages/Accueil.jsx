@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import SessionCard from "../components/SessionCard";
 import { sessionsDuCatalogue } from "../api/formations";
 import SectionContact from "../components/SectionContact";
+import { A_PROPOS } from "../config/contenu";
 import { DOMAINES } from "../config/infos";
 import { useFormations } from "../context/FormationsContext";
 import useTitre from "../hooks/useTitre";
@@ -55,16 +56,7 @@ export default function Accueil() {
             Des parcours conçus pour soutenir le développement des
             compétences professionnelles.
           </p>
-          <span className="panel-mark">F.</span>
-        </div>
-      </section>
-
-      <section className="domains">
-        <p>DES COMPÉTENCES POUR VOTRE PARCOURS</p>
-        <div className="domain-list">
-          {DOMAINES.map((domaine) => (
-            <span key={domaine}>{domaine}</span>
-          ))}
+          <span className="panel-mark"></span>
         </div>
       </section>
 
@@ -114,6 +106,35 @@ export default function Accueil() {
             </Link>
           </div>
         )}
+      </section>
+
+      <section className="presentation-teasing">
+        <div className="presentation-teasing-visuel">
+          <span className="panel-label">QUI SOMMES-NOUS</span>
+          <div className="panel-line" />
+          <h2>Expertise, conseil et formation.</h2>
+          <span className="presentation-teasing-marque" aria-hidden="true">
+            
+          </span>
+        </div>
+        <div className="presentation-teasing-texte">
+          <span className="eyebrow">À PROPOS DE FINEXCO</span>
+          <h2>Un cabinet qui vous accompagne et vous forme</h2>
+          <p>{A_PROPOS.teasing}</p>
+          <ul className="presentation-teasing-domaines">
+            {DOMAINES.map((domaine) => (
+              <li key={domaine}>{domaine}</li>
+            ))}
+          </ul>
+          <div className="presentation-teasing-actions">
+            <Link className="primary-button" to="/qui-sommes-nous">
+              En savoir plus <span aria-hidden="true">→</span>
+            </Link>
+            <Link className="presentation-lien" to="/services">
+              Découvrir nos services
+            </Link>
+          </div>
+        </div>
       </section>
 
       <SectionContact />

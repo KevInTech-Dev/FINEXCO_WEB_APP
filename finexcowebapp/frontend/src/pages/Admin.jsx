@@ -9,9 +9,11 @@ import {
   chargerPaiementsAverifierApi,
   chargerSessionsAdminApi,
   chargerTousPaiementsApi,
+  creerFormateurApi,
   creerFormationAdminApi,
   creerSessionAdminApi,
   modifierFormationAdminApi,
+  modifierSessionAdminApi,
   refuserPaiementApi,
   validerPaiementApi,
 } from "../api/admin";
@@ -33,6 +35,16 @@ const FORMULAIRE_SESSION_VIDE = {
   lieu: "",
   prix: "",
   place_total: "",
+  image: null,
+  etat: "OUVERTE",
+};
+
+const FORMULAIRE_FORMATEUR_VIDE = {
+  nom: "",
+  prenoms: "",
+  email: "",
+  telephone: "",
+  password: "",
 };
 
 function messageErreur(erreur) {
@@ -118,6 +130,10 @@ export default function Admin() {
   );
   const [formulaireSession, setFormulaireSession] = useState(
     FORMULAIRE_SESSION_VIDE
+  );
+  const [sessionEdition, setSessionEdition] = useState(null);
+  const [formulaireFormateur, setFormulaireFormateur] = useState(
+    FORMULAIRE_FORMATEUR_VIDE
   );
   const [paiementsOnglet, setPaiementsOnglet] = useState("attente");
   const [paiementRefus, setPaiementRefus] = useState("");
@@ -227,15 +243,81 @@ export default function Admin() {
     setMessage("");
     setOperation("session");
     try {
+      const donnees = {
+        ...formulaireSession,
+        prix: Number(formulaireSession.prix),
+        place_total: Number(formulaireSession.place_total),
+      };
+      let donneesApi = donnees;
+      if (formulaireSession.image) {
+        const formulaire = new FormData();
+        Object.entries(donnees).forEach(([nom, valeur]) => {
+          if (nom !== "image" && valeur !== null && valeur !== undefined) {
+            formulaire.append(nom, String(valeur));
+          }
+        });
+        formulaire.append("image", formulaireSession.image);
+        donneesApi = formulaire;
+      }
       await appelAuthentifie((jeton) =>
-        creerSessionAdminApi(jeton, {
-          ...formulaireSession,
-          prix: Number(formulaireSession.prix),
-          place_total: Number(formulaireSession.place_total),
+        sessionEdition
+          ? modifierSessionAdminApi(jeton, sessionEdition.id, donneesApi)
+          : creerSessionAdminApi(jeton, donneesApi)
+      );
+      setMessage(sessionEdition ? "La session a été mise à jour." : "La session a été créée.");
+      setSessionEdition(null);
+      setFormulaireSession(FORMULAIRE_SESSION_VIDE);
+      setChargement(true);
+      await chargerDonnees();
+    } catch (e) {
+      setErreur(messageErreur(e));
+    } finally {
+      setOperation("");
+    }
+  }
+
+  function modifierSession(session) {
+    setSessionEdition(session);
+    setFormulaireSession({
+      formation: session.formation?.id || "",
+      formateur: session.formateur?.id || "",
+      date_debut: session.date_debut || "",
+      date_fin: session.date_fin || "",
+      lieu: session.lieu || "",
+      prix: String(session.prix ?? ""),
+      place_total: String(session.place_total ?? ""),
+      image: null,
+      etat: session.etat || "OUVERTE",
+    });
+    setSection("creer-session");
+    setErreur("");
+    setMessage("");
+  }
+
+  function annulerEditionSession() {
+    setSessionEdition(null);
+    setFormulaireSession(FORMULAIRE_SESSION_VIDE);
+  }
+
+  async function enregistrerFormateur(event) {
+    event.preventDefault();
+    setErreur("");
+    setMessage("");
+    setOperation("formateur");
+    try {
+      await appelAuthentifie((jeton) =>
+        creerFormateurApi(jeton, {
+          ...formulaireFormateur,
+          nom: formulaireFormateur.nom.trim(),
+          prenoms: formulaireFormateur.prenoms.trim(),
+          email: formulaireFormateur.email.trim().toLowerCase(),
+          telephone: formulaireFormateur.telephone.trim(),
         })
       );
-      setMessage("La session a été créée.");
-      setFormulaireSession(FORMULAIRE_SESSION_VIDE);
+      setMessage(
+        "Le compte formateur a été créé. Il devra remplacer le mot de passe provisoire dès sa première connexion."
+      );
+      setFormulaireFormateur(FORMULAIRE_FORMATEUR_VIDE);
       setChargement(true);
       await chargerDonnees();
     } catch (e) {
@@ -347,6 +429,13 @@ export default function Admin() {
             <span aria-hidden="true">＋</span> Créer une session
           </button>
           <button
+            className={section === "formateurs" ? "actif" : ""}
+            onClick={() => setSection("formateurs")}
+          >
+            <span aria-hidden="true">♙</span> Formateurs
+            <span className="admin-nav-compteur">{formateurs.length}</span>
+          </button>
+          <button
             className={section === "inscriptions" ? "actif" : ""}
             onClick={() => setSection("inscriptions")}
           >
@@ -379,6 +468,7 @@ export default function Admin() {
               {section === "formations" && "Gestion des formations"}
               {section === "sessions" && "Liste des sessions"}
               {section === "creer-session" && "Créer une session"}
+              {section === "formateurs" && "Gestion des formateurs"}
               {section === "inscriptions" && "Liste des inscriptions"}
               {section === "paiements" && "Vérification des paiements"}
             </h2>
@@ -627,7 +717,7 @@ export default function Admin() {
                         <thead>
                           <tr>
                             <th>Formation</th><th>Formateur</th><th>Période</th>
-                            <th>Lieu</th><th>Places</th><th>Prix</th><th>État</th>
+                            <th>Lieu</th><th>Places</th><th>Prix</th><th>État</th><th></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -646,6 +736,14 @@ export default function Admin() {
                               <td>{session.place_total ?? "—"}</td>
                               <td>{montant(session.prix)}</td>
                               <td><EtatBadge valeur={session.etat} /></td>
+                              <td>
+                                <button
+                                  className="admin-action-texte"
+                                  onClick={() => modifierSession(session)}
+                                >
+                                  Modifier
+                                </button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -661,8 +759,8 @@ export default function Admin() {
                 <section className="admin-carte">
                   <div className="admin-carte-entete">
                     <div>
-                      <span className="eyebrow">NOUVELLE SESSION</span>
-                      <h3>Planifier une session de formation</h3>
+                      <span className="eyebrow">{sessionEdition ? "MODIFICATION" : "NOUVELLE SESSION"}</span>
+                      <h3>{sessionEdition ? "Modifier la session" : "Planifier une session de formation"}</h3>
                     </div>
                   </div>
                   <form className="admin-form admin-form-session" onSubmit={enregistrerSession}>
@@ -766,16 +864,173 @@ export default function Admin() {
                         })}
                       />
                     </label>
+                    <label className="admin-champ">
+                      Image de la session
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(event) => setFormulaireSession({
+                          ...formulaireSession,
+                          image: event.target.files?.[0] ?? null,
+                        })}
+                      />
+                      {sessionEdition?.image && !formulaireSession.image && (
+                        <a
+                          className="admin-action-texte"
+                          href={sessionEdition.image}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Voir l’image actuelle ↗
+                        </a>
+                      )}
+                    </label>
+                    {sessionEdition && (
+                      <label className="admin-champ">
+                        État de la session
+                        <select
+                          required
+                          value={formulaireSession.etat}
+                          onChange={(event) => setFormulaireSession({
+                            ...formulaireSession,
+                            etat: event.target.value,
+                          })}
+                        >
+                          <option value="OUVERTE">Ouverte</option>
+                          <option value="FERMEE">Fermée</option>
+                          <option value="TERMINEE">Terminée</option>
+                        </select>
+                      </label>
+                    )}
                     <div className="admin-actions-form">
                       <button className="primary-button" type="submit" disabled={operation === "session" || formations.length === 0 || formateurs.length === 0}>
-                        {operation === "session" ? "Création…" : "Créer la session"}
+                        {operation === "session" ? "Enregistrement…" : sessionEdition ? "Enregistrer la session" : "Créer la session"}
                       </button>
+                      {sessionEdition && (
+                        <button className="admin-bouton-secondaire" type="button" onClick={annulerEditionSession}>
+                          Annuler
+                        </button>
+                      )}
                     </div>
                   </form>
                   {formateurs.length === 0 && (
                     <p className="admin-note">
                       Aucun formateur n’est disponible. Vérifiez qu’au moins un compte actif a le rôle FORMATEUR.
                     </p>
+                  )}
+                </section>
+              </div>
+            )}
+
+            {section === "formateurs" && (
+              <div className="admin-section admin-deux-colonnes">
+                <section className="admin-carte admin-formulaire-carte">
+                  <div className="admin-carte-entete">
+                    <div>
+                      <span className="eyebrow">NOUVEAU COMPTE</span>
+                      <h3>Ajouter un formateur</h3>
+                    </div>
+                  </div>
+                  <form className="admin-form" onSubmit={enregistrerFormateur}>
+                    <label className="admin-champ">
+                      Nom
+                      <input
+                        required
+                        maxLength={150}
+                        value={formulaireFormateur.nom}
+                        onChange={(event) => setFormulaireFormateur({
+                          ...formulaireFormateur,
+                          nom: event.target.value,
+                        })}
+                      />
+                    </label>
+                    <label className="admin-champ">
+                      Prénoms
+                      <input
+                        required
+                        maxLength={150}
+                        value={formulaireFormateur.prenoms}
+                        onChange={(event) => setFormulaireFormateur({
+                          ...formulaireFormateur,
+                          prenoms: event.target.value,
+                        })}
+                      />
+                    </label>
+                    <label className="admin-champ">
+                      Adresse e-mail
+                      <input
+                        required
+                        type="email"
+                        autoComplete="email"
+                        value={formulaireFormateur.email}
+                        onChange={(event) => setFormulaireFormateur({
+                          ...formulaireFormateur,
+                          email: event.target.value,
+                        })}
+                      />
+                    </label>
+                    <label className="admin-champ">
+                      Téléphone
+                      <input
+                        required
+                        maxLength={20}
+                        value={formulaireFormateur.telephone}
+                        onChange={(event) => setFormulaireFormateur({
+                          ...formulaireFormateur,
+                          telephone: event.target.value,
+                        })}
+                      />
+                    </label>
+                    <label className="admin-champ">
+                      Mot de passe provisoire
+                      <input
+                        required
+                        type="password"
+                        autoComplete="new-password"
+                        minLength={8}
+                        value={formulaireFormateur.password}
+                        onChange={(event) => setFormulaireFormateur({
+                          ...formulaireFormateur,
+                          password: event.target.value,
+                        })}
+                      />
+                    </label>
+                    <p className="admin-note">
+                      Le mot de passe provisoire doit être transmis au formateur de manière sécurisée.
+                    </p>
+                    <div className="admin-actions-form">
+                      <button className="primary-button" type="submit" disabled={operation === "formateur"}>
+                        {operation === "formateur" ? "Création…" : "Créer le compte"}
+                      </button>
+                    </div>
+                  </form>
+                </section>
+                <section className="admin-carte">
+                  <div className="admin-carte-entete">
+                    <div>
+                      <span className="eyebrow">ÉQUIPE PÉDAGOGIQUE</span>
+                      <h3>Formateurs <span className="admin-compteur">{formateurs.length}</span></h3>
+                    </div>
+                  </div>
+                  {formateurs.length === 0 ? (
+                    <div className="admin-vide">Aucun formateur enregistré.</div>
+                  ) : (
+                    <div className="admin-table-enveloppe">
+                      <table className="admin-table">
+                        <thead>
+                          <tr><th>Nom</th><th>Prénoms</th><th>E-mail</th></tr>
+                        </thead>
+                        <tbody>
+                          {formateurs.map((formateur) => (
+                            <tr key={formateur.id}>
+                              <td>{formateur.nom}</td>
+                              <td>{formateur.prenoms}</td>
+                              <td>{formateur.email || "—"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   )}
                 </section>
               </div>

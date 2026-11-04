@@ -51,6 +51,7 @@ class Utilisateur(AbstractUser):
         choices=Role.choices,
         default=Role.APPRENANT,
     )
+    doit_changer_mot_de_passe = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
