@@ -46,20 +46,24 @@ export class ErreurApi extends Error {
 }
 
 export async function appeler(chemin, { methode = "GET", corps, jeton } = {}) {
-  // Un envoi avec fichier (FormData) ne doit PAS avoir de Content-Type écrit
-  // à la main : le navigateur le fabrique lui-même avec le bon séparateur.
-  const avecFichier = typeof FormData !== "undefined" && corps instanceof FormData;
-
   let reponse;
   try {
     reponse = await fetch(chemin, {
       method: methode,
       headers: {
         Accept: "application/json",
-        ...(corps && !avecFichier ? { "Content-Type": "application/json" } : {}),
+        // FormData doit laisser le navigateur définir son boundary multipart.
+        ...(corps && !(typeof FormData !== "undefined" && corps instanceof FormData)
+          ? { "Content-Type": "application/json" }
+          : {}),
         ...(jeton ? { Authorization: `Bearer ${jeton}` } : {}),
       },
-      body: corps ? (avecFichier ? corps : JSON.stringify(corps)) : undefined,
+      // Le JSON est sérialisé; FormData est envoyé tel quel pour les fichiers.
+      body: corps
+        ? typeof FormData !== "undefined" && corps instanceof FormData
+          ? corps
+          : JSON.stringify(corps)
+        : undefined,
     });
   } catch {
     throw new ErreurApi(0, null);
@@ -103,8 +107,6 @@ const TRADUCTIONS = [
   [/too similar/i, "Ce mot de passe ressemble trop à vos informations personnelles."],
   [/too short|at least 8|no less than 8/i, "Le mot de passe est trop court (8 caractères minimum)."],
   [/no more than/i, "Ce texte est trop long."],
-  [/no file was submitted|not a file|file is empty|may not be null/i, "Ajoutez la preuve de paiement (image ou PDF)."],
-  [/not a valid choice/i, "Choisissez un mode de paiement."],
   [/déjà inscrit/i, "Vous êtes déjà inscrit(e) à cette session."],
   [/not valid|token/i, "Votre connexion a expiré. Reconnectez-vous."],
 ];
