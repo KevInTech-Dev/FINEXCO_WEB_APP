@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import SessionCard from "../components/SessionCard";
 import { sessionsDuCatalogue } from "../api/formations";
 import SectionContact from "../components/SectionContact";
-import { DOMAINES } from "../config/infos";
 import { useFormations } from "../context/FormationsContext";
 import useTitre from "../hooks/useTitre";
 
@@ -55,16 +54,7 @@ export default function Accueil() {
             Des parcours conçus pour soutenir le développement des
             compétences professionnelles.
           </p>
-          <span className="panel-mark">F.</span>
-        </div>
-      </section>
-
-      <section className="domains">
-        <p>DES COMPÉTENCES POUR VOTRE PARCOURS</p>
-        <div className="domain-list">
-          {DOMAINES.map((domaine) => (
-            <span key={domaine}>{domaine}</span>
-          ))}
+          <span className="panel-mark"></span>
         </div>
       </section>
 

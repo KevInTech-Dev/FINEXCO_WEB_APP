@@ -23,7 +23,7 @@ export default function AuthLayout({
           {points.map((point) => <li key={point}>{point}</li>)}
         </ul>
         <span className="auth-mark" aria-hidden="true">
-          F.
+          
         </span>
       </aside>
 

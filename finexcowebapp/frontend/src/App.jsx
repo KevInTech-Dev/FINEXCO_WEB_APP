@@ -14,13 +14,17 @@ import FormationDetail from "./pages/FormationDetail";
 import Formations from "./pages/Formations";
 import Inscription from "./pages/Inscription";
 import InscriptionSession from "./pages/InscriptionSession";
+import NosServices from "./pages/NosServices";
 import PageIntrouvable from "./pages/PageIntrouvable";
 import Profil from "./pages/Profil";
 import PremiereConnexion from "./pages/PremiereConnexion";
+import QuiSommesNous from "./pages/QuiSommesNous";
 
 /* Le site est découpé en pages. Chaque adresse (URL) affiche une page :
 
      /                  -> Accueil
+     /qui-sommes-nous   -> Présentation de FINEXCO
+     /services          -> Nos services
      /formations        -> Catalogue complet
      /formations/:id    -> Fiche d'une formation
      /formations/:id/sessions/:sessionId/inscription -> S'inscrire à une session
@@ -69,6 +73,8 @@ function ContenuApplication() {
       <main>
         <Routes>
           <Route path="/" element={<Accueil />} />
+          <Route path="/qui-sommes-nous" element={<QuiSommesNous />} />
+          <Route path="/services" element={<NosServices />} />
           <Route path="/formations" element={<Formations />} />
           <Route path="/formations/:id" element={<FormationDetail />} />
           <Route
