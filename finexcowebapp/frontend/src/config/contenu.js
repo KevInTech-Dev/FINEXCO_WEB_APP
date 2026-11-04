@@ -1,6 +1,8 @@
 export const A_PROPOS = {
   accroche:
     "Un cabinet d'expertise comptable basé à Lomé, qui accompagne les entreprises et partage son savoir-faire à travers des formations pratiques.",
+  teasing:
+    "FINEXCO est une société d'expertise comptable installée à Lomé. Nous accompagnons les entreprises dans la gestion de leurs comptes et nous formons les professionnels qui veulent progresser, avec des formations concrètes, tournées vers la pratique.",
   mission: {
     paragraphes: [
       "Mettre l'expertise comptable et financière à la portée des entreprises, des associations et des professionnels, avec rigueur et simplicité.",
